@@ -9,7 +9,13 @@ export default function Home() {
         Can you spot the difference between the real and AI-generated images?
         Challenge yourself with this cosmic guessing game.
       </p>
-      <div>
+      <div className="flex gap-4">
+        <Link
+          className="p-2 border-2 border-white rounded hover:bg-blue-500 active:bg-blue-300"
+          href="/apod"
+        >
+          Show APOD
+        </Link>
         <Link
           className="p-2 border-2 border-white rounded hover:bg-blue-500 active:bg-blue-300"
           href="/showImage"
