@@ -33,6 +33,12 @@ export default function Home() {
         >
           NASA vs AI
         </Link>
+        <Link
+          className="p-2 border-2 border-white rounded hover:bg-blue-500 active:bg-blue-300"
+          href="/play"
+        >
+          Play
+        </Link>
       </div>
     </main>
   );

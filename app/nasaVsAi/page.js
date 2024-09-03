@@ -7,10 +7,11 @@ export default function NasaVsAiPage() {
   const [aiImageUrl, setAiImageUrl] = useState(null);
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(false);
-  const [isNasaFirst, setIsNasaFirst] = useState(true); // Determines the order of images
-  const [selectedImage, setSelectedImage] = useState(null); // Tracks which image is selected
-  const [resultMessage, setResultMessage] = useState(""); // Holds the result message
-  const [showFullExplanation, setShowFullExplanation] = useState(false); // Manages "Read More" state
+  const [isNasaFirst, setIsNasaFirst] = useState(true);
+  const [selectedImage, setSelectedImage] = useState(null);
+  const [resultMessage, setResultMessage] = useState("");
+  const [saveMessage, setSaveMessage] = useState("");
+  const [showFullExplanation, setShowFullExplanation] = useState(false);
 
   const fetchApod = async (endpoint) => {
     setLoading(true);
@@ -20,6 +21,7 @@ export default function NasaVsAiPage() {
     setSelectedImage(null);
     setResultMessage("");
     setShowFullExplanation(false);
+    setSaveMessage("");
 
     try {
       const response = await fetch(endpoint);
@@ -28,6 +30,14 @@ export default function NasaVsAiPage() {
       }
 
       const data = await response.json();
+
+      // Check if the APOD is a video
+      if (data.media_type === "video") {
+        console.log("APOD is a video, fetching another one...");
+        fetchApod("/api/nasaApod?count=1");
+        return;
+      }
+
       setApodData(data);
 
       const aiResponse = await fetch("/api/generateAiImage", {
@@ -45,7 +55,6 @@ export default function NasaVsAiPage() {
       const aiData = await aiResponse.json();
       setAiImageUrl(aiData.imageUrl);
 
-      // Randomize the order of the images
       setIsNasaFirst(Math.random() > 0.5);
     } catch (err) {
       console.error("Error fetching APOD or generating AI image:", err);
@@ -76,6 +85,32 @@ export default function NasaVsAiPage() {
       } else {
         setResultMessage("Wrong choice! The AI image was selected.");
       }
+    }
+  };
+
+  const handleSave = async () => {
+    try {
+      const response = await fetch("/api/saveNasaVsAi", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          metadata: apodData,
+          nasaUrl: apodData.url,
+          aiImageUrl: aiImageUrl,
+        }),
+      });
+
+      const result = await response.json();
+      if (result.success) {
+        setSaveMessage("NASA vs AI data saved successfully!");
+      } else {
+        setSaveMessage("Failed to save data.");
+      }
+    } catch (error) {
+      console.error("Error saving data:", error);
+      setSaveMessage("Error saving data.");
     }
   };
 
@@ -192,6 +227,17 @@ export default function NasaVsAiPage() {
 
           {resultMessage && (
             <p className="mt-4 text-2xl font-bold">{resultMessage}</p>
+          )}
+
+          <button
+            onClick={handleSave}
+            className="px-4 py-2 mt-4 text-white bg-yellow-600 rounded hover:bg-yellow-500"
+          >
+            Save to Database
+          </button>
+
+          {saveMessage && (
+            <p className="mt-4 font-bold text-green-500">{saveMessage}</p>
           )}
 
           <button
