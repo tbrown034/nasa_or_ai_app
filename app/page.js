@@ -1,4 +1,3 @@
-import Image from "next/image";
 import Link from "next/link";
 
 export default function Home() {
@@ -18,9 +17,15 @@ export default function Home() {
         </Link>
         <Link
           className="p-2 border-2 border-white rounded hover:bg-blue-500 active:bg-blue-300"
+          href="/random"
+        >
+          Show Random APOD
+        </Link>
+        <Link
+          className="p-2 border-2 border-white rounded hover:bg-blue-500 active:bg-blue-300"
           href="/showImage"
         >
-          Show Image
+          Show Image (Dummy Metadata)
         </Link>
       </div>
     </main>
