@@ -27,6 +27,12 @@ export default function Home() {
         >
           Show Image (Dummy Metadata)
         </Link>
+        <Link
+          className="p-2 border-2 border-white rounded hover:bg-blue-500 active:bg-blue-300"
+          href="/nasaVsAi"
+        >
+          NASA vs AI
+        </Link>
       </div>
     </main>
   );
