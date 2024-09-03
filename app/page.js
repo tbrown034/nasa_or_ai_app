@@ -1,5 +1,22 @@
 import Image from "next/image";
+import Link from "next/link";
 
 export default function Home() {
-  return <main></main>;
+  return (
+    <main className="flex flex-col items-center justify-center min-h-screen gap-4 p-4">
+      <h1>NASA or Not</h1>
+      <p className="text-xl ">
+        Can you spot the difference between the real and AI-generated images?
+        Challenge yourself with this cosmic guessing game.
+      </p>
+      <div>
+        <Link
+          className="p-2 border-2 border-white rounded hover:bg-blue-500 active:bg-blue-300"
+          href="/showImage"
+        >
+          Show Image
+        </Link>
+      </div>
+    </main>
+  );
 }
