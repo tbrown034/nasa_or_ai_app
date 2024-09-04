@@ -2,6 +2,8 @@ import { Inter } from "next/font/google";
 import "./globals.css";
 import Header from "./UI/Header";
 import Footer from "./UI/Footer";
+import { SessionProvider } from "next-auth/react"; // Import the SessionProvider
+
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata = {
@@ -16,9 +18,12 @@ export default function RootLayout({ children }) {
       <body
         className={`${inter.className} p-4 flex flex-col min-h-screen bg-gradient-to-b from-black via-gray-900 to-blue-900 text-white`}
       >
-        <Header />
-        <main className="flex-grow">{children}</main>
-        <Footer />
+        {/* Wrap everything inside SessionProvider */}
+        <SessionProvider>
+          <Header />
+          <main className="flex-grow">{children}</main>
+          <Footer />
+        </SessionProvider>
       </body>
     </html>
   );
