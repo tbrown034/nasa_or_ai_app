@@ -5,7 +5,6 @@ export async function GET() {
   try {
     const client = await pool.connect();
 
-    // Fetch images from the new model only
     const newImagesResult = await client.query(`
       SELECT
         metadata.id AS metadata_id,
@@ -13,6 +12,7 @@ export async function GET() {
         metadata.explanation,
         metadata.copyright,
         metadata.date,
+        metadata.date_time_added,  -- Ensure this is fetched
         nasa.url AS nasa_image_url,
         ai.ai_image AS ai_image_data
       FROM

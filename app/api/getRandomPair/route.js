@@ -10,7 +10,7 @@ export async function GET() {
       SELECT id, title, explanation, copyright, date
       FROM image_metadata
       ORDER BY RANDOM()
-      LIMIT 1
+      LIMIT 2
     `);
 
     const metadata = randomMetadataResult.rows[0];
