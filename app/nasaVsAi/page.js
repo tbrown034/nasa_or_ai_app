@@ -12,8 +12,19 @@ export default function NasaVsAiPage() {
   const [resultMessage, setResultMessage] = useState("");
   const [saveMessage, setSaveMessage] = useState("");
   const [showFullExplanation, setShowFullExplanation] = useState(false);
+  const [lastRequestTime, setLastRequestTime] = useState(0); // Track the last request time
+
+  const RATE_LIMIT_INTERVAL = 10000; // Set rate limit to 10 seconds
 
   const fetchApod = async (endpoint) => {
+    const now = Date.now();
+
+    if (now - lastRequestTime < RATE_LIMIT_INTERVAL) {
+      setError("Please wait a bit before making another request.");
+      return;
+    }
+
+    setLastRequestTime(now);
     setLoading(true);
     setError(null);
     setApodData(null);
