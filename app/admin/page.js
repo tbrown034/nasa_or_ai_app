@@ -1,5 +1,6 @@
 "use client";
 
+import { useSession } from "next-auth/react"; // Import useSession for session management
 import { useEffect, useState } from "react";
 
 // Utility function to format dates
@@ -9,11 +10,13 @@ const formatDate = (dateString) => {
 };
 
 export default function AdminPage() {
+  const { data: session, status } = useSession(); // Access the session data
   const [images, setImages] = useState([]);
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(true); // Start loading as true
   const [selectedImage, setSelectedImage] = useState(null); // For modal image
 
+  // Fetch images from the server
   useEffect(() => {
     const fetchImages = async () => {
       try {
@@ -35,6 +38,19 @@ export default function AdminPage() {
     fetchImages();
   }, []);
 
+  // Protect the admin page - only render for the correct user
+  if (status === "loading") {
+    return <p>Loading...</p>;
+  }
+
+  if (!session || session.user.email !== "trevorbrown.web@gmail.com") {
+    return (
+      <div className="flex items-center justify-center min-h-screen bg-gray-900">
+        <h1 className="text-4xl text-white">Access Denied</h1>
+      </div>
+    );
+  }
+
   // Delete handler with confirmation
   const handleDelete = async (imageId) => {
     const confirmDelete = window.confirm(
@@ -54,7 +70,7 @@ export default function AdminPage() {
       }
 
       // Filter out the deleted image from the state
-      setImages(images.filter((image) => image.id !== imageId));
+      setImages(images.filter((image) => image.metadata_id !== imageId));
       alert("Image deleted successfully.");
     } catch (error) {
       console.error("Error deleting image:", error);
