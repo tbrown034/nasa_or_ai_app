@@ -11,25 +11,6 @@ export default function Home() {
       <div className="flex gap-4">
         <Link
           className="p-2 border-2 border-white rounded hover:bg-blue-500 active:bg-blue-300"
-          href="/apod"
-        >
-          Show APOD
-        </Link>
-        <Link
-          className="p-2 border-2 border-white rounded hover:bg-blue-500 active:bg-blue-300"
-          href="/random"
-        >
-          Show Random APOD
-        </Link>
-
-        <Link
-          className="p-2 border-2 border-white rounded hover:bg-blue-500 active:bg-blue-300"
-          href="/nasaVsAi"
-        >
-          NASA vs AI
-        </Link>
-        <Link
-          className="p-2 border-2 border-white rounded hover:bg-blue-500 active:bg-blue-300"
           href="/play"
         >
           Play

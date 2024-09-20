@@ -1,3 +1,5 @@
+// app/layout.js
+
 import { Inter } from "next/font/google";
 import "./globals.css";
 import Header from "./UI/Header";
@@ -16,12 +18,12 @@ export default function RootLayout({ children }) {
   return (
     <html lang="en">
       <body
-        className={`${inter.className} p-4 flex flex-col min-h-screen bg-gradient-to-b from-black via-gray-900 to-blue-900 text-white`}
+        className={`${inter.className} p-4 flex flex-col min-h-screen bg-gradient-to-b from-indigo-900 via-blue-800 to-indigo-900 text-white relative`}
       >
         {/* Wrap everything inside SessionProvider */}
         <SessionProvider>
           <Header />
-          <main className="flex-grow">{children}</main>
+          <main className="relative z-10 flex-grow">{children}</main>
           <Footer />
         </SessionProvider>
       </body>

@@ -115,7 +115,7 @@ export default function PlayPage() {
   };
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen p-4 text-white bg-gradient-to-b from-black via-gray-900 to-blue-900">
+    <div className="flex flex-col items-center justify-center min-h-screen p-4">
       <h1 className="mb-4 text-4xl font-bold">NASA or AI: The Challenge</h1>
 
       {loading && <p>Loading...</p>}
@@ -129,7 +129,7 @@ export default function PlayPage() {
           <p className="mb-2 italic text-gray-400">
             Date: {imageData.metadata.date}
           </p>
-          <p className="mb-4 text-gray-500">{imageData.metadata.explanation}</p>
+          <p className="mb-4 text-gray-100">{imageData.metadata.explanation}</p>
 
           <div className="grid grid-cols-1 gap-8 md:grid-cols-2">
             {renderImagePair()}

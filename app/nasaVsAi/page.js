@@ -198,7 +198,7 @@ export default function NasaVsAiPage() {
   };
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen p-4 text-white bg-gradient-to-b from-black via-gray-900 to-blue-900">
+    <div className="flex flex-col items-center justify-center gap-2">
       <h1 className="mb-4 text-4xl font-bold">NASA vs AI</h1>
       <div className="mb-4">
         <button
