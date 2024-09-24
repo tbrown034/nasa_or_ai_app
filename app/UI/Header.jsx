@@ -4,9 +4,29 @@ import React from "react";
 import Link from "next/link";
 import { useSession } from "next-auth/react";
 
+// Extract the links into constants
+const Links = () => (
+  <div className="hidden gap-4 text-white sm:flex">
+    <Link href="/game" className="transition hover:text-gray-400">
+      Play Now
+    </Link>
+    <Link
+      href="https://apod.nasa.gov/apod/archivepix.html"
+      className="transition hover:text-gray-400"
+    >
+      NASA Picture of the Day Archive
+    </Link>
+    <Link href="/about" className="transition hover:text-gray-400">
+      About
+    </Link>
+  </div>
+);
+
 const Header = () => {
   const { data: session } = useSession();
-  const isAdmin = session?.user?.email === process.env.NEXT_PUBLIC_ADMIN_EMAIL; // Check admin
+
+  // Check if the user is an admin by comparing the role stored in session
+  const isAdmin = session?.user?.role === "admin";
 
   return (
     <nav className="flex items-center justify-between py-4">
@@ -17,20 +37,8 @@ const Header = () => {
         NASA or Not
       </Link>
 
-      <div className="hidden gap-4 text-white sm:flex">
-        <Link href="/game" className="transition hover:text-gray-400">
-          Play Now
-        </Link>
-        <Link
-          href="https://apod.nasa.gov/apod/archivepix.html"
-          className="transition hover:text-gray-400"
-        >
-          NASA Picture of the Day Archive
-        </Link>
-        <Link href="/about" className="transition hover:text-gray-400">
-          About
-        </Link>
-      </div>
+      {/* Render the extracted Links component */}
+      <Links />
 
       <div className="flex gap-4">
         {session ? (
@@ -41,6 +49,8 @@ const Header = () => {
             >
               Profile
             </Link>
+
+            {/* Show Admin button if user is an admin */}
             {isAdmin && (
               <Link
                 href="/admin"
