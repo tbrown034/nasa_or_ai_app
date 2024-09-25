@@ -1,15 +1,39 @@
 "use client";
 
 import { useSession, signOut } from "next-auth/react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 
 const Profile = () => {
   const { data: session, status } = useSession();
   const [showModal, setShowModal] = useState(false);
-  const isAdmin = session?.user?.email === process.env.NEXT_PUBLIC_ADMIN_EMAIL; // Check admin
+  const [userData, setUserData] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
-  if (status === "loading") {
+  const isAdmin = session?.user?.email === process.env.NEXT_PUBLIC_ADMIN_EMAIL;
+
+  // Fetch user data from the backend API
+  useEffect(() => {
+    const fetchUserData = async () => {
+      if (session) {
+        setLoading(true);
+        try {
+          const response = await fetch("/api/getUserData");
+          if (!response.ok) throw new Error("Failed to fetch user data");
+          const user = await response.json();
+          setUserData(user);
+        } catch (err) {
+          setError(err.message);
+        } finally {
+          setLoading(false);
+        }
+      }
+    };
+    fetchUserData();
+  }, [session]);
+
+  if (status === "loading" || loading) {
     return (
       <div className="flex items-center justify-center min-h-screen">
         <h1>Loading...</h1>
@@ -45,6 +69,27 @@ const Profile = () => {
         </Link>
       )}
 
+      {/* Display user data if available */}
+      {userData && (
+        <div className="p-4 mb-4 bg-gray-800 rounded-lg">
+          <img
+            src={userData.image}
+            alt="User Avatar"
+            className="w-16 h-16 mb-4 rounded-full"
+          />
+          <p>
+            <strong>Name:</strong> {userData.name}
+          </p>
+          <p>
+            <strong>Email:</strong> {userData.email}
+          </p>
+          <p>
+            <strong>Date Added:</strong>{" "}
+            {new Date(userData.created_at).toLocaleDateString()}
+          </p>
+        </div>
+      )}
+
       <button
         onClick={toggleModal}
         className="px-6 py-2 text-white bg-red-500 rounded hover:bg-red-600"
@@ -52,6 +97,7 @@ const Profile = () => {
         Sign Out
       </button>
 
+      {/* Sign Out Confirmation Modal */}
       {showModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
           <div className="p-6 bg-white rounded-lg shadow-lg w-96">
