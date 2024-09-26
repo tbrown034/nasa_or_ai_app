@@ -1,3 +1,4 @@
+// generateAIImage.route.js
 import { NextResponse } from "next/server";
 import OpenAI from "openai";
 

@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 
-export default function PlayPage() {
+export default function Play() {
   const [imageData, setImageData] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);

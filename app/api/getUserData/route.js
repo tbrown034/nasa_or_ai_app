@@ -1,8 +1,7 @@
-import { auth } from "@/auth"; // Auth.js auth function for getting session data
-import pool from "../../../lib/db"; // Assuming you have your db connection set up
+import { auth } from "@/auth";
+import pool from "../../../lib/db";
 
-export async function GET(req) {
-  // Fetch session from the server using the Auth.js auth() function
+export async function GET() {
   const session = await auth();
 
   if (!session || !session.user) {
@@ -34,12 +33,12 @@ export async function GET(req) {
       });
     }
 
-    // Include session info that Auth.js already has (like name and image) along with DB data
+    // Fallback to session image if database image is null
     return new Response(
       JSON.stringify({
-        name: session.user.name || user.name,
-        email: session.user.email || user.email,
-        image: session.user.image || user.image,
+        name: user.name || session.user.name,
+        email: user.email || session.user.email,
+        image: user.image || session.user.image, // Use session image if database image is null
         created_at: user.created_at,
       }),
       { status: 200 }
