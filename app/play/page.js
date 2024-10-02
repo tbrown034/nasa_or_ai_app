@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import Image from "next/image"; // Import Next.js Image component
 
 export default function Play() {
   const [imageData, setImageData] = useState(null);
@@ -28,7 +29,6 @@ export default function Play() {
         throw new Error(data.error || "Failed to fetch random image pair");
       }
 
-      // Assigning the correct images to the URLs
       setImageData({
         metadata: data.metadata,
         nasaImageUrl: `/api/getImageA?id=${data.nasaImageId}`,
@@ -83,9 +83,11 @@ export default function Play() {
         }`}
         style={{ width: "400px", height: "400px" }}
       >
-        <img
+        <Image
           src={imageData.nasaImageUrl}
           alt="Guess AI or NASA Image"
+          layout="fill" // Ensures it fills the container
+          objectFit="cover"
           className={imageClass}
         />
         {selectedImage === "nasa" && (
@@ -105,9 +107,11 @@ export default function Play() {
         }`}
         style={{ width: "400px", height: "400px" }}
       >
-        <img
+        <Image
           src={imageData.aiImageUrl}
           alt="Guess AI or NASA Image"
+          layout="fill"
+          objectFit="cover"
           className={imageClass}
         />
         {selectedImage === "ai" && (
