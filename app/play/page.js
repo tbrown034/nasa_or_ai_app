@@ -28,15 +28,14 @@ export default function Play() {
         throw new Error(data.error || "Failed to fetch random image pair");
       }
 
+      // Assigning the correct images to the URLs
       setImageData({
         metadata: data.metadata,
-        nasaUrl: data.nasaUrl,
-        aiImageUrl: `data:image/png;base64,${Buffer.from(
-          data.aiImageData
-        ).toString("base64")}`,
+        nasaImageUrl: `/api/getImageA?id=${data.nasaImageId}`,
+        aiImageUrl: `/api/getImageB?id=${data.aiImageId}`,
       });
 
-      setIsNasaFirst(Math.random() > 0.5);
+      setIsNasaFirst(Math.random() > 0.5); // Randomize image order
     } catch (err) {
       console.error("Error fetching random pair:", err);
       setError(err.message);
@@ -84,7 +83,11 @@ export default function Play() {
         }`}
         style={{ width: "400px", height: "400px" }}
       >
-        <img src={imageData.nasaUrl} alt="NASA Image" className={imageClass} />
+        <img
+          src={imageData.nasaImageUrl}
+          alt="Guess AI or NASA Image"
+          className={imageClass}
+        />
         {selectedImage === "nasa" && (
           <div className="absolute inset-0 flex items-center justify-center text-xl font-bold text-white bg-black bg-opacity-50">
             Selected
@@ -102,7 +105,11 @@ export default function Play() {
         }`}
         style={{ width: "400px", height: "400px" }}
       >
-        <img src={imageData.aiImageUrl} alt="AI Image" className={imageClass} />
+        <img
+          src={imageData.aiImageUrl}
+          alt="Guess AI or NASA Image"
+          className={imageClass}
+        />
         {selectedImage === "ai" && (
           <div className="absolute inset-0 flex items-center justify-center text-xl font-bold text-white bg-black bg-opacity-50">
             Selected

@@ -1,6 +1,6 @@
-// getrandompairRoute.js
+// app/api/getRandomPair/route.js
 import { NextResponse } from "next/server";
-import pool from "../../../lib/db";
+import pool from "@/lib/db"; // Correct import path for db.js
 
 export async function GET() {
   try {
@@ -11,7 +11,7 @@ export async function GET() {
       SELECT id, title, explanation, copyright, date
       FROM image_metadata
       ORDER BY RANDOM()
-      LIMIT 2
+      LIMIT 1
     `);
 
     const metadata = randomMetadataResult.rows[0];
@@ -19,31 +19,13 @@ export async function GET() {
       return NextResponse.json({ success: false, error: "No images found" });
     }
 
-    const nasaResult = await client.query(
-      `
-      SELECT url
-      FROM image_nasa
-      WHERE metadata_id = $1
-    `,
-      [metadata.id]
-    );
-
-    const aiResult = await client.query(
-      `
-      SELECT ai_image
-      FROM image_ai
-      WHERE metadata_id = $1
-    `,
-      [metadata.id]
-    );
-
     client.release();
 
     return NextResponse.json({
       success: true,
       metadata,
-      nasaUrl: nasaResult.rows[0]?.url,
-      aiImageData: aiResult.rows[0]?.ai_image,
+      nasaImageId: metadata.id, // Send metadata id for NASA image
+      aiImageId: metadata.id, // Send metadata id for AI image
     });
   } catch (error) {
     console.error("Error fetching random image pair:", error);
