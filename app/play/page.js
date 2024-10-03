@@ -1,7 +1,9 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import Image from "next/image"; // Import Next.js Image component
+import ImagePair from "./components/ImagePair";
+import ImageData from "./components/ImageData";
+import PlayButtons from "./components/PlayButtons"; // Import PlayButtons component
 
 export default function Play() {
   const [imageData, setImageData] = useState(null);
@@ -35,7 +37,7 @@ export default function Play() {
         aiImageUrl: `/api/getImageB?id=${data.aiImageId}`,
       });
 
-      setIsNasaFirst(Math.random() > 0.5); // Randomize image order
+      setIsNasaFirst(Math.random() > 0.5);
     } catch (err) {
       console.error("Error fetching random pair:", err);
       setError(err.message);
@@ -68,63 +70,6 @@ export default function Play() {
     fetchRandomPair();
   };
 
-  const renderImagePair = () => {
-    const imageClass = "object-cover w-full h-full rounded-lg";
-    const selectedClass = "border-4 border-blue-500 transform scale-105";
-    const unselectedClass =
-      selectedImage === "nasa" || selectedImage === "ai" ? "opacity-50" : "";
-
-    const nasaImage = (
-      <div
-        key="nasa"
-        onClick={() => handleImageClick("nasa")}
-        className={`relative cursor-pointer transition-all duration-300 ease-in-out ${
-          selectedImage === "nasa" ? selectedClass : unselectedClass
-        }`}
-        style={{ width: "400px", height: "400px" }}
-      >
-        <Image
-          src={imageData.nasaImageUrl}
-          alt="Guess AI or NASA Image"
-          layout="fill" // Ensures it fills the container
-          objectFit="cover"
-          className={imageClass}
-        />
-        {selectedImage === "nasa" && (
-          <div className="absolute inset-0 flex items-center justify-center text-xl font-bold text-white bg-black bg-opacity-50">
-            Selected
-          </div>
-        )}
-      </div>
-    );
-
-    const aiImage = (
-      <div
-        key="ai"
-        onClick={() => handleImageClick("ai")}
-        className={`relative cursor-pointer transition-all duration-300 ease-in-out ${
-          selectedImage === "ai" ? selectedClass : unselectedClass
-        }`}
-        style={{ width: "400px", height: "400px" }}
-      >
-        <Image
-          src={imageData.aiImageUrl}
-          alt="Guess AI or NASA Image"
-          layout="fill"
-          objectFit="cover"
-          className={imageClass}
-        />
-        {selectedImage === "ai" && (
-          <div className="absolute inset-0 flex items-center justify-center text-xl font-bold text-white bg-black bg-opacity-50">
-            Selected
-          </div>
-        )}
-      </div>
-    );
-
-    return isNasaFirst ? [nasaImage, aiImage] : [aiImage, nasaImage];
-  };
-
   return (
     <div className="flex flex-col items-center justify-center min-h-screen p-4">
       <h1 className="mb-4 text-4xl font-bold">NASA or AI: The Challenge</h1>
@@ -134,36 +79,24 @@ export default function Play() {
 
       {imageData && (
         <div className="flex flex-col items-center">
-          <h2 className="mb-2 text-2xl font-bold">
-            {imageData.metadata.title}
-          </h2>
-          <p className="mb-2 italic text-gray-400">
-            Date: {imageData.metadata.date}
-          </p>
-          <p className="mb-4 text-gray-100">{imageData.metadata.explanation}</p>
+          <ImageData metadata={imageData.metadata} />
 
           <div className="grid grid-cols-1 gap-8 md:grid-cols-2">
-            {renderImagePair()}
+            <ImagePair
+              nasaImageUrl={imageData.nasaImageUrl}
+              aiImageUrl={imageData.aiImageUrl}
+              isNasaFirst={isNasaFirst}
+              selectedImage={selectedImage}
+              handleImageClick={handleImageClick}
+            />
           </div>
 
-          <button
-            onClick={handleSubmit}
-            disabled={!selectedImage}
-            className="px-4 py-2 mt-6 text-white bg-purple-600 rounded hover:bg-purple-500"
-          >
-            Submit
-          </button>
-
-          {resultMessage && (
-            <p className="mt-4 text-2xl font-bold">{resultMessage}</p>
-          )}
-
-          <button
-            onClick={handleNext}
-            className="px-4 py-2 mt-4 text-white bg-yellow-600 rounded hover:bg-yellow-500"
-          >
-            Next
-          </button>
+          <PlayButtons
+            handleSubmit={handleSubmit}
+            handleNext={handleNext}
+            selectedImage={selectedImage}
+            resultMessage={resultMessage}
+          />
         </div>
       )}
     </div>

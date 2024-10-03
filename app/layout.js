@@ -1,29 +1,27 @@
-// app/layout.js
-
-import { Inter } from "next/font/google";
+import { Inter, Press_Start_2P } from "next/font/google";
 import "./globals.css";
-import Header from "./UI/Header";
-import Footer from "./UI/Footer";
-import { SessionProvider } from "next-auth/react"; // Import the SessionProvider
+import Header from "./UI/Header"; // Import your Header
+import Footer from "./UI/Footer"; // Import your Footer
+import { SessionProvider } from "next-auth/react"; // Import SessionProvider for authentication
 
-const inter = Inter({ subsets: ["latin"] });
-
-export const metadata = {
-  title: "NASA or Not",
-  description:
-    "An app challenging users to identify the real NASA Picture of the Day and spot the AI-generated imposter. Developed by Trevor Brown",
-};
+// Inter for general use
+const inter = Inter({
+  subsets: ["latin"],
+  display: "swap",
+});
 
 export default function RootLayout({ children }) {
   return (
-    <html lang="en">
-      <body
-        className={`${inter.className} p-4 flex flex-col min-h-screen bg-gradient-to-b from-indigo-900 via-blue-800 to-indigo-900 text-white relative`}
-      >
-        {/* Wrap everything inside SessionProvider */}
+    <html lang="en" className={inter.className}>
+      <body className="relative flex flex-col min-h-screen p-4 text-white bg-gradient-to-b from-indigo-900 via-blue-800 to-indigo-900">
         <SessionProvider>
+          {/* Header */}
           <Header />
-          <main className="relative z-10 flex-grow">{children}</main>
+
+          {/* Main content */}
+          <main className="flex-grow">{children}</main>
+
+          {/* Footer */}
           <Footer />
         </SessionProvider>
       </body>

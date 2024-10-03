@@ -3,7 +3,7 @@
 
 export default function AboutPage() {
   return (
-    <div className="min-h-screen p-4 text-white bg-gradient-to-b from-black via-gray-900 to-blue-900">
+    <div className="min-h-screen p-4 text-white ">
       <h1 className="mb-8 text-4xl font-bold text-center">About</h1>
 
       <div className="flex flex-col max-w-3xl gap-8 mx-auto">
