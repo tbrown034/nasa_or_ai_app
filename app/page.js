@@ -1,7 +1,7 @@
 import Link from "next/link";
-import { Press_Start_2P } from "next/font/google"; // Import font for manual application
+import { Audiowide } from "next/font/google";
 
-const pressStart2P = Press_Start_2P({
+const audiowide = Audiowide({
   weight: "400",
   subsets: ["latin"],
   display: "swap",
@@ -10,53 +10,53 @@ const pressStart2P = Press_Start_2P({
 export default function Home() {
   return (
     <main className="flex flex-col items-center justify-center min-h-screen p-6">
-      {/* Hero Section with Press Start 2P */}
+      {/* Hero Section */}
       <h1
-        className={`mb-8 text-center text-yellow-300 text-8xl ${pressStart2P.className}`}
+        className={`mb-8 text-center text-yellow-300 tracking-widest text-6xl ${audiowide.className}`}
       >
         NASA or Not
       </h1>
 
-      {/* Challenge Description with Press Start 2P */}
+      {/* Challenge Description */}
       <p
-        className={` mb-12 text-2xl tracking-wider text-center text-gray-300 ${pressStart2P.className}`}
+        className={`mb-12 text-xl tracking-wider text-center text-gray-200 ${audiowide.className}`}
       >
         Can you tell the difference between real NASA images and AI-generated
-        imposters? Put your skills to the test in a cosmic guessing game!
+        imposters? Test your skills in this cosmic guessing game!
       </p>
 
-      {/* Game Modes Buttons with Inter (default) */}
-      <div className="flex gap-8 mb-12">
+      {/* Game Modes Buttons */}
+      <div className="flex gap-6 mb-10">
         <Link
-          className="px-8 py-4 text-2xl font-bold text-black transition-transform transform bg-yellow-300 border-4 border-yellow-300 rounded-lg hover:bg-yellow-400 hover:text-white hover:scale-105"
+          className="px-6 py-3 text-xl font-semibold text-black bg-yellow-300 rounded-lg hover:bg-yellow-400"
           href="/play"
         >
           Classic Mode
         </Link>
         <Link
-          className="px-8 py-4 text-2xl font-bold text-black transition-transform transform bg-pink-400 border-4 border-pink-400 rounded-lg hover:bg-pink-500 hover:text-white hover:scale-105"
+          className="px-6 py-3 text-xl font-semibold text-black bg-blue-400 rounded-lg hover:bg-blue-600"
           href="/play"
         >
           Challenge Mode
         </Link>
         <Link
-          className="px-8 py-4 text-2xl font-bold text-black transition-transform transform bg-green-400 border-4 border-green-400 rounded-lg hover:bg-green-500 hover:text-white hover:scale-105"
+          className="px-6 py-3 text-xl font-semibold text-black rounded-lg bg-slate-300 hover:bg-gray-100"
           href="/play"
         >
           Battle Mode
         </Link>
       </div>
 
-      {/* Login/Sign In Button with Inter (default) */}
-      <div className="flex gap-4 mt-6">
+      {/* Log In/Sign Up & About Buttons */}
+      <div className="flex gap-4 mt-16">
         <Link
-          className="px-8 py-4 text-2xl font-bold text-black transition-transform transform bg-blue-400 border-4 border-blue-400 rounded-lg hover:bg-blue-500 hover:text-white hover:scale-105"
+          className="px-6 py-3 text-lg font-medium text-white transition-transform transform border-4 border-white rounded-lg hover:bg-white hover:text-black hover:scale-105"
           href="/login"
         >
           Log In / Sign Up
         </Link>
         <Link
-          className="px-8 py-4 text-2xl font-bold text-black transition-transform transform bg-blue-400 border-4 border-blue-400 rounded-lg hover:bg-blue-500 hover:text-white hover:scale-105"
+          className="px-6 py-3 text-lg font-medium text-white transition-transform transform border-4 border-white rounded-lg hover:bg-white hover:text-black hover:scale-105"
           href="/about"
         >
           About

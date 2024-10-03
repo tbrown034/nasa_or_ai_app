@@ -3,10 +3,26 @@
 import React from "react";
 import Link from "next/link";
 import { useSession } from "next-auth/react";
+import { Major_Mono_Display, Audiowide } from "next/font/google"; // Import fonts
 
-// Extract the links into constants
+// Major Mono Display for the title
+const majorMono = Major_Mono_Display({
+  weight: "400",
+  subsets: ["latin"],
+  display: "swap",
+});
+
+// Audiowide for the links and buttons
+const audiowide = Audiowide({
+  weight: "400",
+  subsets: ["latin"],
+  display: "swap",
+});
+
 const Links = () => (
-  <div className="hidden gap-4 text-white sm:flex">
+  <div
+    className={`hidden gap-6  xl:text-2xl lg:text-xl text-white  sm:flex ${audiowide.className}`}
+  >
     <Link href="/game" className="transition hover:text-gray-400">
       Play Now
     </Link>
@@ -25,36 +41,36 @@ const Links = () => (
 const Header = () => {
   const { data: session } = useSession();
 
-  // Check if the user is an admin by comparing the role stored in session
   const isAdmin = session?.user?.role === "admin";
 
   return (
     <nav className="flex items-center justify-between py-4">
+      {/* "NASA or Not" with Major Mono Display */}
       <Link
         href="/"
-        className="text-2xl font-bold text-white hover:text-gray-400"
+        className={`text-4xl font-bold text-yellow-300 hover:text-gray-400 tracking-wider ${audiowide.className}`}
       >
         NASA or Not
       </Link>
 
-      {/* Render the extracted Links component */}
+      {/* Middle Links with Audiowide */}
       <Links />
 
+      {/* Profile/Login with Audiowide and improved button styling */}
       <div className="flex gap-4">
         {session ? (
           <>
             <Link
               href="/profile"
-              className="p-2 ml-auto text-white border-2 border-white rounded-xl hover:bg-white hover:text-blue-800"
+              className="p-2 ml-auto text-xl text-black transition-transform transform bg-yellow-300 border-2 border-yellow-300 rounded-xl hover:bg-yellow-400 hover:text-white hover:scale-105"
             >
               Profile
             </Link>
 
-            {/* Show Admin button if user is an admin */}
             {isAdmin && (
               <Link
                 href="/admin"
-                className="p-2 text-white border-2 border-white rounded-xl hover:bg-white hover:text-blue-800"
+                className={`p-2 text-white border-2 border-pink-300 rounded-xl bg-pink-400 hover:bg-pink-500 hover:text-white transition-transform transform hover:scale-105 ${audiowide.className}`}
               >
                 Admin
               </Link>
@@ -63,7 +79,7 @@ const Header = () => {
         ) : (
           <Link
             href="/login"
-            className="p-2 ml-auto text-white border-2 border-white rounded-xl hover:bg-white hover:text-blue-800"
+            className={`p-2 ml-auto text-white border-2 border-blue-400 rounded-xl bg-blue-400 hover:bg-blue-500 hover:text-white transition-transform transform hover:scale-105 ${audiowide.className}`}
           >
             Log In
           </Link>
