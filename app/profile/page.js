@@ -5,7 +5,7 @@ import { useState, useEffect } from "react";
 import Link from "next/link";
 import { Audiowide } from "next/font/google";
 
-// Import the retro font for titles and buttons
+// Import the Audiowide font for titles
 const audiowide = Audiowide({
   weight: "400",
   subsets: ["latin"],
@@ -68,39 +68,43 @@ const Profile = () => {
   const toggleModal = () => setShowModal(!showModal);
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen p-6">
-      <h1
-        className={`mb-4 text-4xl font-bold text-yellow-300 ${audiowide.className}`}
-      >
-        Welcome, {session.user.name}!
-      </h1>
-      <p className="mb-4 text-xl text-gray-300">This is your profile page.</p>
-
-      {/* Admin Link */}
-      {isAdmin && (
-        <Link
-          href="/admin"
-          className="px-6 py-2 mb-4 text-xl font-semibold text-black bg-yellow-300 rounded-lg hover:bg-yellow-400"
+    <div className="flex flex-col items-center justify-center min-h-screen gap-10 p-6">
+      <div className="flex flex-col items-center gap-2">
+        <h1
+          className={`mb-4 text-4xl font-bold text-yellow-300 ${audiowide.className}`}
         >
-          Go to Admin Page
-        </Link>
-      )}
+          Welcome, {session.user.name}!
+        </h1>
+        <p className="mb-4 text-xl text-gray-300">This is your profile page.</p>
+
+        {/* Admin Link */}
+        <div>
+          {isAdmin && (
+            <Link
+              href="/admin"
+              className="px-6 py-2 mb-4 text-xl font-semibold text-black bg-yellow-300 rounded-lg hover:bg-yellow-400"
+            >
+              Go to Admin Page
+            </Link>
+          )}
+        </div>
+      </div>
 
       {/* Display user data if available */}
       {userData && (
-        <div className="p-4 mb-4 text-white bg-gray-800 rounded-lg">
+        <div className="p-8 text-center bg-gray-900 rounded-lg shadow-lg">
           <img
             src={userData.image}
             alt="User Avatar"
-            className="w-16 h-16 mb-4 rounded-full"
+            className="w-32 h-32 mx-auto mb-4 border-4 border-yellow-300 rounded-full"
           />
-          <p>
+          <p className="mb-2 text-xl text-white">
             <strong>Name:</strong> {userData.name}
           </p>
-          <p>
+          <p className="mb-2 text-xl text-white">
             <strong>Email:</strong> {userData.email}
           </p>
-          <p>
+          <p className="text-xl text-white">
             <strong>Date Added:</strong>{" "}
             {new Date(userData.created_at).toLocaleDateString()}
           </p>
@@ -110,7 +114,7 @@ const Profile = () => {
       {/* Sign Out Button */}
       <button
         onClick={toggleModal}
-        className="px-6 py-2 text-xl font-semibold text-white bg-red-500 rounded-lg hover:bg-red-600"
+        className="px-6 py-3 mt-6 text-lg font-medium text-white bg-red-500 rounded-lg hover:bg-red-600"
       >
         Sign Out
       </button>
@@ -125,13 +129,13 @@ const Profile = () => {
             <div className="flex justify-between">
               <button
                 onClick={handleSignOut}
-                className="px-4 py-2 text-white bg-red-500 rounded hover:bg-red-600"
+                className="px-4 py-2 text-white bg-red-500 rounded-lg hover:bg-red-600"
               >
                 Yes, Sign Out
               </button>
               <button
                 onClick={toggleModal}
-                className="px-4 py-2 text-gray-800 bg-gray-200 rounded hover:bg-gray-300"
+                className="px-4 py-2 text-gray-800 bg-gray-200 rounded-lg hover:bg-gray-300"
               >
                 Cancel
               </button>

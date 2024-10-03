@@ -23,7 +23,7 @@ const Links = () => (
   <div
     className={`hidden gap-6  xl:text-2xl lg:text-xl text-white  sm:flex ${audiowide.className}`}
   >
-    <Link href="/game" className="transition hover:text-gray-400">
+    <Link href="/play" className="transition hover:text-gray-400">
       Play Now
     </Link>
     <Link
