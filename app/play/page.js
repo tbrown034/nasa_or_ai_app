@@ -1,9 +1,15 @@
 "use client";
-
 import { useEffect, useState } from "react";
-import ImagePair from "./components/ImagePair";
-import ImageData from "./components/ImageData";
-import PlayButtons from "./components/PlayButtons"; // Import PlayButtons component
+import ImagePair from "./components/ImagePair"; // Assuming you have ImagePair already created
+import PlayButtons from "./components/PlayButtons"; // Play buttons separated for cleaner code
+import ImageData from "./components/ImageData"; // For displaying image metadata
+import { Audiowide } from "next/font/google"; // Using Audiowide for retro font
+
+const audiowide = Audiowide({
+  weight: "400",
+  subsets: ["latin"],
+  display: "swap",
+});
 
 export default function Play() {
   const [imageData, setImageData] = useState(null);
@@ -22,14 +28,10 @@ export default function Play() {
 
     try {
       const response = await fetch("/api/getRandomPair");
-      if (!response.ok) {
-        throw new Error(`Error: ${response.status} ${response.statusText}`);
-      }
-
+      if (!response.ok) throw new Error(`Error: ${response.status}`);
       const data = await response.json();
-      if (!data.success) {
-        throw new Error(data.error || "Failed to fetch random image pair");
-      }
+      if (!data.success)
+        throw new Error(data.error || "Failed to fetch image pair");
 
       setImageData({
         metadata: data.metadata,
@@ -37,9 +39,8 @@ export default function Play() {
         aiImageUrl: `/api/getImageB?id=${data.aiImageId}`,
       });
 
-      setIsNasaFirst(Math.random() > 0.5);
+      setIsNasaFirst(Math.random() > 0.5); // Randomize image order
     } catch (err) {
-      console.error("Error fetching random pair:", err);
       setError(err.message);
     } finally {
       setLoading(false);
@@ -50,38 +51,33 @@ export default function Play() {
     fetchRandomPair();
   }, []);
 
-  const handleImageClick = (imageType) => {
-    setSelectedImage(imageType);
-  };
+  const handleImageClick = (imageType) => setSelectedImage(imageType);
 
   const handleSubmit = () => {
-    if (selectedImage) {
-      if (selectedImage === "nasa") {
-        setResultMessage(
-          "Congratulations! You correctly identified the NASA image."
-        );
-      } else {
-        setResultMessage("Wrong choice! The AI image was selected.");
-      }
+    if (selectedImage === "nasa") {
+      setResultMessage("You correctly identified the NASA image!");
+    } else {
+      setResultMessage("Wrong choice! The AI image was selected.");
     }
   };
 
-  const handleNext = () => {
-    fetchRandomPair();
-  };
+  const handleNext = () => fetchRandomPair();
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen p-4">
-      <h1 className="mb-4 text-4xl font-bold">NASA or AI: The Challenge</h1>
+    <div className="flex flex-col items-center justify-center min-h-screen p-8">
+      <h1 className={`text-4xl text-yellow-300 mb-6 ${audiowide.className}`}>
+        NASA or AI: The Challenge
+      </h1>
 
-      {loading && <p>Loading...</p>}
+      {loading && <p className="text-white">Loading...</p>}
       {error && <p className="text-red-500">Error: {error}</p>}
 
       {imageData && (
         <div className="flex flex-col items-center">
           <ImageData metadata={imageData.metadata} />
 
-          <div className="grid grid-cols-1 gap-8 md:grid-cols-2">
+          {/* Image Pair Component */}
+          <div className="flex gap-8 mt-6">
             <ImagePair
               nasaImageUrl={imageData.nasaImageUrl}
               aiImageUrl={imageData.aiImageUrl}
@@ -91,11 +87,12 @@ export default function Play() {
             />
           </div>
 
+          {/* Play Buttons Component */}
           <PlayButtons
-            handleSubmit={handleSubmit}
-            handleNext={handleNext}
             selectedImage={selectedImage}
             resultMessage={resultMessage}
+            handleSubmit={handleSubmit}
+            handleNext={handleNext}
           />
         </div>
       )}
