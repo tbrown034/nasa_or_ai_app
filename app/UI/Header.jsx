@@ -1,90 +1,111 @@
 "use client";
 
-import React from "react";
+import React, { useState, useRef, useEffect } from "react";
 import Link from "next/link";
 import { useSession } from "next-auth/react";
-import { Major_Mono_Display, Audiowide } from "next/font/google"; // Import fonts
-
-// Major Mono Display for the title
-const majorMono = Major_Mono_Display({
-  weight: "400",
-  subsets: ["latin"],
-  display: "swap",
-});
-
-// Audiowide for the links and buttons
-const audiowide = Audiowide({
-  weight: "400",
-  subsets: ["latin"],
-  display: "swap",
-});
-
-const Links = () => (
-  <div
-    className={`hidden gap-6  xl:text-2xl lg:text-xl text-white  sm:flex ${audiowide.className}`}
-  >
-    <Link href="/play" className="transition hover:text-gray-400">
-      Play Now
-    </Link>
-    <Link
-      href="https://apod.nasa.gov/apod/archivepix.html"
-      className="transition hover:text-gray-400"
-    >
-      NASA Picture of the Day Archive
-    </Link>
-    <Link href="/about" className="transition hover:text-gray-400">
-      About
-    </Link>
-  </div>
-);
+import { UserCircleIcon, Bars3Icon } from "@heroicons/react/24/outline";
+import { UserCircleIcon as UserCircleIconSolid } from "@heroicons/react/24/solid";
 
 const Header = () => {
   const { data: session } = useSession();
+  const [menuOpen, setMenuOpen] = useState(false);
+  const menuRef = useRef(null); // Reference for menu dropdown
 
-  const isAdmin = session?.user?.role === "admin";
+  const toggleMenu = () => setMenuOpen(!menuOpen);
+
+  // Close menu if clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (menuRef.current && !menuRef.current.contains(event.target)) {
+        setMenuOpen(false);
+      }
+    };
+    if (menuOpen) {
+      document.addEventListener("mousedown", handleClickOutside);
+    } else {
+      document.removeEventListener("mousedown", handleClickOutside);
+    }
+
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [menuOpen]);
 
   return (
-    <nav className="flex items-center justify-between py-4">
-      {/* "NASA or Not" with Major Mono Display */}
+    <nav className="flex items-center justify-between p-2">
+      {/* Title */}
       <Link
         href="/"
-        className={`text-4xl font-bold text-yellow-300 hover:text-yellow-400 tracking-wider ${audiowide.className}`}
+        className="text-3xl font-bold tracking-wider text-yellow-300 sm:text-4xl hover:text-yellow-400"
       >
         NASA or Not
       </Link>
 
-      {/* Middle Links with Audiowide */}
-      <Links />
-
-      {/* Profile/Login with Audiowide and improved button styling */}
-      <div className="flex gap-4">
-        {session ? (
-          <>
-            <Link
-              href="/profile"
-              className="p-2 ml-auto text-xl text-black transition-transform transform bg-yellow-300 border-2 border-yellow-300 rounded-xl hover:bg-yellow-400 hover:text-white hover:scale-105"
-            >
-              Profile
-            </Link>
-
-            {isAdmin && (
-              <Link
-                href="/admin"
-                className={`p-2 text-white border-2 border-pink-300 rounded-xl bg-pink-400 hover:bg-pink-500 hover:text-white transition-transform transform hover:scale-105 ${audiowide.className}`}
-              >
-                Admin
-              </Link>
-            )}
-          </>
-        ) : (
-          <Link
-            href="/login"
-            className={`p-2 ml-auto text-white border-2 border-blue-400 rounded-xl bg-blue-400 hover:bg-blue-500 hover:text-white transition-transform transform hover:scale-105 ${audiowide.className}`}
-          >
-            Log In
-          </Link>
-        )}
+      {/* Middle Links for larger screens */}
+      <div className="hidden gap-6 text-white sm:flex xl:text-2xl lg:text-xl">
+        <Link href="/play" className="hover:text-gray-400">
+          Play
+        </Link>
+        <Link
+          href="https://apod.nasa.gov/apod/archivepix.html"
+          className="hover:text-gray-400"
+        >
+          NASA Picture of the Day
+        </Link>
+        <Link href="/about" className="hover:text-gray-400">
+          About
+        </Link>
       </div>
+
+      {/* Profile Icon & Hamburger */}
+      <div className="flex items-center gap-4">
+        <Link href={session ? "/profile" : "/login"} className="text-white">
+          {session ? (
+            <UserCircleIconSolid className="w-8 h-8" />
+          ) : (
+            <UserCircleIcon className="w-8 h-8" />
+          )}
+        </Link>
+
+        {/* Hamburger Icon (Visible on mobile only) */}
+        <button
+          onClick={toggleMenu}
+          aria-expanded={menuOpen}
+          className="text-white sm:hidden"
+        >
+          <Bars3Icon className="w-8 h-8" />
+        </button>
+      </div>
+
+      {/* Mobile Menu */}
+      {menuOpen && (
+        <div
+          ref={menuRef}
+          className="absolute p-4 bg-gray-800 rounded-md shadow-lg top-16 right-4 sm:hidden"
+        >
+          <Link
+            href="/play"
+            className="block mb-2 text-lg text-white hover:text-gray-400"
+            onClick={toggleMenu}
+          >
+            Play
+          </Link>
+          <Link
+            href="https://apod.nasa.gov/apod/archivepix.html"
+            className="block mb-2 text-lg text-white hover:text-gray-400"
+            onClick={toggleMenu}
+          >
+            NASA Picture of the Day
+          </Link>
+          <Link
+            href="/about"
+            className="block text-lg text-white hover:text-gray-400"
+            onClick={toggleMenu}
+          >
+            About
+          </Link>
+        </div>
+      )}
     </nav>
   );
 };

@@ -3,7 +3,7 @@ import React, { useState } from "react";
 import Image from "next/image";
 import { Audiowide } from "next/font/google";
 import realLogo from "../../public/assets/logos/nasaLogoReal.png";
-import aiLogo from "../../public/assets/logos/nasaLogoAi.png"; // Use imported images for consistency
+import aiLogo from "../../public/assets/logos/nasaLogoAi.png";
 
 // Import the font for "VS" text
 const audiowide = Audiowide({
@@ -13,49 +13,35 @@ const audiowide = Audiowide({
 });
 
 const Logo = () => {
-  const [isAiLogo, setIsAiLogo] = useState(false); // Toggle between NASA and AI logos
+  const [isAiLogoFirst, setIsAiLogoFirst] = useState(false); // Toggle for the first logo
+  const [isAiLogoSecond, setIsAiLogoSecond] = useState(true); // Toggle for the second logo (AI first by default)
 
-  // Handle hover/click toggle
-  const toggleLogo = () => {
-    setIsAiLogo(!isAiLogo);
+  // Handle click to toggle between logos for the first image
+  const toggleFirstLogo = () => {
+    setIsAiLogoFirst(!isAiLogoFirst);
+  };
+
+  // Handle click to toggle between logos for the second image
+  const toggleSecondLogo = () => {
+    setIsAiLogoSecond(!isAiLogoSecond);
   };
 
   return (
     <div className="flex flex-col items-center justify-center gap-6 p-4 sm:flex-row">
-      {/* NASA Logo (click to toggle AI logo) */}
+      {/* First Logo (real NASA first) */}
       <div
         className="relative cursor-pointer group"
-        onMouseEnter={toggleLogo}
-        onMouseLeave={toggleLogo}
-        onClick={toggleLogo}
+        onClick={toggleFirstLogo} // Clicking toggles this logo
       >
         <div
-          className={`transition-transform duration-700 ${
-            isAiLogo ? "opacity-0" : "opacity-100"
-          }`}
-        >
-          {/* NASA Official Logo */}
-          <Image
-            src={realLogo}
-            alt="NASA Official Logo"
-            width={150}
-            height={150}
-            className="transition-all duration-500 transform group-hover:scale-110"
-          />
-        </div>
-
-        {/* AI Logo (Toggles on hover or click) */}
-        <div
-          className={`absolute top-0 left-0 transition-transform duration-700 ${
-            isAiLogo ? "opacity-100" : "opacity-0"
-          }`}
+          className={`transition-transform duration-500 transform group-hover:scale-110`}
         >
           <Image
-            src={aiLogo}
-            alt="AI Generated NASA Logo"
+            src={isAiLogoFirst ? aiLogo : realLogo} // Toggle between AI and Real logo
+            alt={isAiLogoFirst ? "AI Logo" : "Real NASA Logo"}
             width={150}
             height={150}
-            className="transition-all duration-500 transform group-hover:scale-110"
+            className="transition-all duration-500"
           />
         </div>
       </div>
@@ -67,14 +53,23 @@ const Logo = () => {
         VS
       </div>
 
-      {/* Static AI Logo */}
-      <Image
-        src={aiLogo} // Make sure you're consistently using the imported logo
-        alt="AI Generated NASA Logo"
-        width={150}
-        height={150}
-        className="transition-all duration-500 transform hover:scale-110"
-      />
+      {/* Second Logo (AI first by default) */}
+      <div
+        className="relative cursor-pointer group"
+        onClick={toggleSecondLogo} // Clicking toggles this logo
+      >
+        <div
+          className={`transition-transform duration-500 transform group-hover:scale-110`}
+        >
+          <Image
+            src={isAiLogoSecond ? aiLogo : realLogo} // Toggle between AI and Real logo
+            alt={isAiLogoSecond ? "AI Logo" : "Real NASA Logo"}
+            width={150}
+            height={150}
+            className="transition-all duration-500"
+          />
+        </div>
+      </div>
     </div>
   );
 };
