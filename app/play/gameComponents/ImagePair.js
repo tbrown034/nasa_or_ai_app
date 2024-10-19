@@ -1,4 +1,3 @@
-// components/ImagePair.js
 import Image from "next/image";
 
 const ImagePair = ({
@@ -59,7 +58,7 @@ const ImagePair = ({
         className={imageClass}
       />
       {selectedImage === "ai" && (
-        <div className="absolute inset-0 flex items-center justify-center text-xl font-bold text-white ">
+        <div className="absolute inset-0 flex items-center justify-center text-xl font-bold text-white">
           Selected
         </div>
       )}
@@ -67,7 +66,7 @@ const ImagePair = ({
   );
 
   return (
-    <div className="flex flex-col items-center w-full gap-4 md:flex-row">
+    <div className="flex flex-col items-center w-full gap-8 md:flex-row">
       {isNasaFirst ? nasaImage : aiImage}
       {isNasaFirst ? aiImage : nasaImage}
     </div>

@@ -48,7 +48,7 @@ const Header = () => {
       {/* "NASA or Not" with Major Mono Display */}
       <Link
         href="/"
-        className={`text-4xl font-bold text-yellow-300 hover:text-gray-400 tracking-wider ${audiowide.className}`}
+        className={`text-4xl font-bold text-yellow-300 hover:text-yellow-400 tracking-wider ${audiowide.className}`}
       >
         NASA or Not
       </Link>

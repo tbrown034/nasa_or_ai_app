@@ -4,7 +4,6 @@ import { useSession, signOut } from "next-auth/react";
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import { Audiowide } from "next/font/google";
-import { useSession } from "next-auth/react";
 
 // Import the Audiowide font for titles
 const audiowide = Audiowide({

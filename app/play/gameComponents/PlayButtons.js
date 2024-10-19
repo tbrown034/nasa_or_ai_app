@@ -1,19 +1,6 @@
-// components/PlayButtons.js
-const PlayButtons = ({
-  selectedImage,
-  resultMessage,
-  handleSubmit,
-  handleNext,
-}) => {
+const PlayButtons = ({ selectedImage, handleSubmit, handleNext }) => {
   return (
     <div className="flex flex-col items-center mt-8">
-      {/* Display Result Message */}
-      {resultMessage && (
-        <p className="mb-4 text-2xl font-bold text-green-400 animate-bounce">
-          {resultMessage}
-        </p>
-      )}
-
       {/* Submit Button */}
       <button
         onClick={handleSubmit}

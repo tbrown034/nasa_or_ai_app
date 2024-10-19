@@ -1,4 +1,3 @@
-// components/ImageData.js
 import { useState } from "react";
 
 const ImageData = ({ metadata }) => {
@@ -7,8 +6,8 @@ const ImageData = ({ metadata }) => {
   // Format the date to "MM/DD/YYYY"
   const formattedDate = new Date(metadata.date).toLocaleDateString("en-US");
 
-  // Truncate the explanation to 400 characters
-  const maxLength = 400;
+  // Truncate the explanation to 200 characters
+  const maxLength = 200;
   const truncatedExplanation = metadata.explanation.slice(0, maxLength);
 
   // Toggle "Show more" state
@@ -17,7 +16,7 @@ const ImageData = ({ metadata }) => {
   };
 
   return (
-    <div className="w-full max-w-2xl p-4 mt-4 text-center rounded-md shadow-md">
+    <div className="w-full text-center">
       <h2 className="mb-2 text-2xl font-bold text-yellow-300">
         {metadata.title}
       </h2>
@@ -29,7 +28,6 @@ const ImageData = ({ metadata }) => {
           : `${truncatedExplanation}${
               metadata.explanation.length > maxLength ? "..." : ""
             }`}
-
         {metadata.explanation.length > maxLength && (
           <span
             onClick={handleShowMore}
