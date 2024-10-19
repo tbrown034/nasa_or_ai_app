@@ -1,15 +1,9 @@
+// components/Play.js
 "use client";
 import { useEffect, useState } from "react";
-import ImagePair from "./components/ImagePair"; // Assuming you have ImagePair already created
-import PlayButtons from "./components/PlayButtons"; // Play buttons separated for cleaner code
-import ImageData from "./components/ImageData"; // For displaying image metadata
-import { Audiowide } from "next/font/google"; // Using Audiowide for retro font
-
-const audiowide = Audiowide({
-  weight: "400",
-  subsets: ["latin"],
-  display: "swap",
-});
+import ImagePair from "./components/ImagePair";
+import PlayButtons from "./components/PlayButtons";
+import ImageData from "./components/ImageData";
 
 export default function Play() {
   const [imageData, setImageData] = useState(null);
@@ -39,7 +33,7 @@ export default function Play() {
         aiImageUrl: `/api/getImageB?id=${data.aiImageId}`,
       });
 
-      setIsNasaFirst(Math.random() > 0.5); // Randomize image order
+      setIsNasaFirst(Math.random() > 0.5);
     } catch (err) {
       setError(err.message);
     } finally {
@@ -55,39 +49,52 @@ export default function Play() {
 
   const handleSubmit = () => {
     if (selectedImage === "nasa") {
-      setResultMessage("You correctly identified the NASA image!");
+      setResultMessage("🎉 Correct! You identified the real NASA image!");
     } else {
-      setResultMessage("Wrong choice! The AI image was selected.");
+      setResultMessage("🚫 Incorrect! That was the AI-generated image.");
     }
   };
 
   const handleNext = () => fetchRandomPair();
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen p-8">
-      <h1 className={`text-4xl text-yellow-300 mb-6 ${audiowide.className}`}>
+    <div className="flex flex-col items-center justify-center min-h-screen p-4 text-white ">
+      {loading && <p className="text-xl text-yellow-400">Loading...</p>}
+      {error && <p className="text-xl text-red-500">{error}</p>}
+
+      <h1 className="text-4xl font-bold text-center text-yellow-400 md:text-5xl">
         NASA or AI: The Challenge
       </h1>
 
-      {loading && <p className="text-white">Loading...</p>}
-      {error && <p className="text-red-500">Error: {error}</p>}
+      <div className="w-full max-w-3xl">
+        {/* Instruction Section */}
+        <div className="p-6 mb-8 text-lg text-center bg-gray-800 rounded-md shadow-lg">
+          <strong>Instructions:</strong> Choose the image you think is the real
+          NASA Photo of the Day. Click on the photo to select it, and when
+          you're ready, hit the "Submit" button below. Good luck!
+        </div>
 
-      {imageData && (
-        <div className="flex flex-col items-center">
-          <ImageData metadata={imageData.metadata} />
+        {/* Image Data, Image Pair, and Play Buttons */}
+        <div className="p-6 bg-gray-800 rounded-md shadow-lg">
+          {imageData && (
+            <div className="flex flex-col items-center justify-center gap-6">
+              {/* Display Image Metadata */}
+              <ImageData metadata={imageData.metadata} />
 
-          {/* Image Pair Component */}
-          <div className="flex gap-8 mt-6">
-            <ImagePair
-              nasaImageUrl={imageData.nasaImageUrl}
-              aiImageUrl={imageData.aiImageUrl}
-              isNasaFirst={isNasaFirst}
-              selectedImage={selectedImage}
-              handleImageClick={handleImageClick}
-            />
-          </div>
+              {/* Image Pair (NASA vs AI) */}
+              <div className="flex flex-col items-center gap-6 md:flex-row">
+                <ImagePair
+                  nasaImageUrl={imageData.nasaImageUrl}
+                  aiImageUrl={imageData.aiImageUrl}
+                  isNasaFirst={isNasaFirst}
+                  selectedImage={selectedImage}
+                  handleImageClick={handleImageClick}
+                />
+              </div>
+            </div>
+          )}
 
-          {/* Play Buttons Component */}
+          {/* Play Buttons */}
           <PlayButtons
             selectedImage={selectedImage}
             resultMessage={resultMessage}
@@ -95,7 +102,7 @@ export default function Play() {
             handleNext={handleNext}
           />
         </div>
-      )}
+      </div>
     </div>
   );
 }
