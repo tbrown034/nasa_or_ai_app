@@ -1,11 +1,11 @@
-import { ArrowPathIcon } from "@heroicons/react/24/solid";
+// app/play/loading.jsx
 
-const LoadingSpinner = () => {
+import LoadingSpinner from "../UI/LoadingSpinner";
+
+export default function Loading() {
   return (
-    <div className="flex items-center justify-center h-screen">
-      <ArrowPathIcon className="w-16 h-16 text-yellow-400 animate-spin" />
-    </div>
+    <>
+      <LoadingSpinner />
+    </>
   );
-};
-
-export default LoadingSpinner;
+}
