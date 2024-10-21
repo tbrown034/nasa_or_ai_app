@@ -50,7 +50,7 @@ const Logo = () => {
       <div
         className={`text-5xl text-yellow-300 ${audiowide.className} transition-all duration-300 transform hover:scale-110`}
       >
-        VS
+        OR
       </div>
 
       {/* Second Logo (AI first by default) */}

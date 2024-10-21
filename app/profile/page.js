@@ -5,7 +5,7 @@ import { useState, useEffect } from "react";
 import Link from "next/link";
 import { Audiowide } from "next/font/google";
 
-// Import the Audiowide font for titles
+// Importing the Audiowide font for titles
 const audiowide = Audiowide({
   weight: "400",
   subsets: ["latin"],
@@ -13,11 +13,10 @@ const audiowide = Audiowide({
 });
 
 const Profile = () => {
-  const { data: session, status } = useSession();
+  const { data: session } = useSession();
   const [showModal, setShowModal] = useState(false);
   const [userData, setUserData] = useState(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+  const [loading, setLoading] = useState(true); // Loading state for fetching user data
 
   const isAdmin = session?.user?.email === process.env.NEXT_PUBLIC_ADMIN_EMAIL;
 
@@ -25,32 +24,19 @@ const Profile = () => {
   useEffect(() => {
     const fetchUserData = async () => {
       if (session) {
-        setLoading(true);
         try {
           const response = await fetch("/api/getUserData");
-          if (!response.ok) throw new Error("Failed to fetch user data");
           const user = await response.json();
           setUserData(user);
-        } catch (err) {
-          setError(err.message);
         } finally {
-          setLoading(false);
+          setLoading(false); // Stop loading after data is fetched
         }
       }
     };
     fetchUserData();
   }, [session]);
 
-  if (status === "loading" || loading) {
-    return (
-      <div className="flex items-center justify-center min-h-screen">
-        <h1 className={`text-4xl text-yellow-300 ${audiowide.className}`}>
-          Loading...
-        </h1>
-      </div>
-    );
-  }
-
+  // Handle no session (user not logged in)
   if (!session) {
     return (
       <div className="flex items-center justify-center min-h-screen">
@@ -61,6 +47,7 @@ const Profile = () => {
     );
   }
 
+  // Handle sign out action
   const handleSignOut = async () => {
     await signOut({ callbackUrl: "/" });
   };
@@ -77,20 +64,16 @@ const Profile = () => {
         </h1>
         <p className="mb-4 text-xl text-gray-300">This is your profile page.</p>
 
-        {/* Admin Link */}
-        <div>
-          {isAdmin && (
-            <Link
-              href="/admin"
-              className="px-6 py-2 mb-4 text-xl font-semibold text-black bg-yellow-300 rounded-lg hover:bg-yellow-400"
-            >
-              Go to Admin Page
-            </Link>
-          )}
-        </div>
+        {isAdmin && (
+          <Link
+            href="/admin"
+            className="px-6 py-2 mb-4 text-xl font-semibold text-black bg-yellow-300 rounded-lg hover:bg-yellow-400"
+          >
+            Go to Admin Page
+          </Link>
+        )}
       </div>
 
-      {/* Display user data if available */}
       {userData && (
         <div className="p-8 text-center bg-gray-900 rounded-lg shadow-lg">
           <img
@@ -111,7 +94,6 @@ const Profile = () => {
         </div>
       )}
 
-      {/* Sign Out Button */}
       <button
         onClick={toggleModal}
         className="px-6 py-3 mt-6 text-lg font-medium text-white bg-red-500 rounded-lg hover:bg-red-600"
@@ -119,7 +101,6 @@ const Profile = () => {
         Sign Out
       </button>
 
-      {/* Sign Out Confirmation Modal */}
       {showModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
           <div className="p-6 bg-white rounded-lg shadow-lg w-96">
