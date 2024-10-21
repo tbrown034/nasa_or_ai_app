@@ -1,7 +1,6 @@
 // app/api/getRandomPair/route.js
 import { NextResponse } from "next/server";
 import pool from "@/lib/db"; // Correct import path for db.js
-
 export async function GET() {
   try {
     const client = await pool.connect();
