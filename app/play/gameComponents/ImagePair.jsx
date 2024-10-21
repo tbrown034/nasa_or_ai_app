@@ -32,7 +32,7 @@ const ImagePair = ({
     >
       <Image
         src={nasaImageUrl}
-        alt="NASA Image"
+        alt=" Image"
         fill
         sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
         onLoadingComplete={() => setNasaImageLoaded(true)}
@@ -61,7 +61,7 @@ const ImagePair = ({
     >
       <Image
         src={aiImageUrl}
-        alt="AI Image"
+        alt=" Image"
         fill
         sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
         onLoadingComplete={() => setAiImageLoaded(true)}
