@@ -1,12 +1,13 @@
+// app/login/page.jsx
 import React from "react";
 import SignIn from "../UI/sign-in";
 
-const page = () => {
+const Page = () => {
   return (
-    <div className="flex flex-col gap-4">
+    <div className="flex flex-col items-center justify-center min-h-screen p-6 ">
       <SignIn />
     </div>
   );
 };
 
-export default page;
+export default Page;

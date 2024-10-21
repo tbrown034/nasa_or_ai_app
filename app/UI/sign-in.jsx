@@ -1,10 +1,13 @@
-"use client";
+// app/UI/sign-in.jsx
+"use client"; // Necessary for useSession and navigation hooks
 
-import { useRouter } from "next/navigation"; // Import the useRouter hook
+import { useRouter } from "next/navigation";
 import { useSession, signIn } from "next-auth/react";
-import { Audiowide } from "next/font/google"; // Import the Audiowide font
+import { Audiowide } from "next/font/google";
+import { ArrowPathIcon } from "@heroicons/react/24/solid";
+import Logo from "./Logo"; // Assuming Logo is a component for your branding/logo
 
-// Apply the Audiowide font for the button
+// Apply the Audiowide font
 const audiowide = Audiowide({
   weight: "400",
   subsets: ["latin"],
@@ -12,27 +15,52 @@ const audiowide = Audiowide({
 });
 
 export default function SignIn() {
-  const router = useRouter(); // Initialize useRouter for client-side navigation
-  const { data: session } = useSession();
+  const router = useRouter();
+  const { data: session, status } = useSession();
+
+  // Handle redirection if already signed in
+  if (status === "loading") {
+    return (
+      <div className="flex flex-col items-center justify-center min-h-screen">
+        <ArrowPathIcon className="w-12 h-12 text-yellow-300 animate-spin" />
+        <p className="mt-4 text-lg text-yellow-300">Loading...</p>
+      </div>
+    );
+  }
 
   if (session) {
-    // If user is already signed in, redirect to the profile page
     router.push("/profile");
-    return null; // Return null to prevent rendering the login form
+    return null;
   }
 
   const handleSignIn = async () => {
-    await signIn("google", { callbackUrl: "/profile" }); // Redirect to profile after successful login
+    await signIn("google", { callbackUrl: "/profile" });
   };
 
   return (
-    <div className="flex items-center justify-center min-h-screen p-6">
+    <div className="flex flex-col items-center justify-center min-h-screen gap-8 p-6 text-center">
+      {/* Branding or Logo */}
+      <Logo />
+
+      {/* Heading */}
+      <h1
+        className={`text-5xl font-bold text-yellow-300 ${audiowide.className}`}
+      >
+        Welcome to NASA or Not
+      </h1>
+
+      {/* Login Button */}
       <button
         onClick={handleSignIn}
-        className="p-16 text-xl font-semibold text-black bg-yellow-300 rounded-lg hover:bg-yellow-400"
+        className={`px-10 py-4 mt-8 text-2xl font-bold text-black bg-yellow-300 rounded-lg hover:bg-yellow-400 transition duration-300 ${audiowide.className}`}
       >
         Sign in with Google
       </button>
+
+      {/* Subtitle or description */}
+      <p className="text-lg text-gray-200">
+        Sign in to explore NASA's real images or AI-generated fakes.
+      </p>
     </div>
   );
 }

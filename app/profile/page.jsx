@@ -4,6 +4,7 @@ import { useSession, signOut } from "next-auth/react";
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import { Audiowide } from "next/font/google";
+import Modal from "../UI/Modal"; // Import your new Modal component
 
 // Importing the Audiowide font for titles
 const audiowide = Audiowide({
@@ -101,29 +102,16 @@ const Profile = () => {
         Sign Out
       </button>
 
-      {showModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
-          <div className="p-6 bg-white rounded-lg shadow-lg w-96">
-            <h2 className="mb-4 text-lg font-semibold text-gray-800">
-              Are you sure you want to sign out?
-            </h2>
-            <div className="flex justify-between">
-              <button
-                onClick={handleSignOut}
-                className="px-4 py-2 text-white bg-red-500 rounded-lg hover:bg-red-600"
-              >
-                Yes, Sign Out
-              </button>
-              <button
-                onClick={toggleModal}
-                className="px-4 py-2 text-gray-800 bg-gray-200 rounded-lg hover:bg-gray-300"
-              >
-                Cancel
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
+      {/* Reusable Modal */}
+      <Modal
+        title="Are you sure you want to sign out?"
+        content="By signing out, you will need to log back in to access your profile."
+        primaryAction={handleSignOut}
+        primaryLabel="Yes, Sign Out"
+        secondaryLabel="Cancel"
+        isOpen={showModal}
+        onClose={toggleModal} // Use the toggle function to close the modal
+      />
     </div>
   );
 };
