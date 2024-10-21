@@ -29,9 +29,9 @@ const GameBoard = ({ imageData, isNasaFirst, fetchRandomPair }) => {
   };
 
   return (
-    <div className="w-full p-6 bg-gray-800 rounded-md shadow-lg">
-      {/* Images Above */}
-      <div className="flex flex-col items-center gap-6 md:flex-row">
+    <div className="w-full p-6 rounded-md shadow-lg bg-gradient-to-b from-gray-800 to-gray-900">
+      <div className="flex flex-col items-center justify-center gap-6">
+        {/* Image Pair */}
         <ImagePair
           nasaImageUrl={imageData.nasaImageUrl}
           aiImageUrl={imageData.aiImageUrl}
@@ -39,25 +39,25 @@ const GameBoard = ({ imageData, isNasaFirst, fetchRandomPair }) => {
           selectedImage={selectedImage}
           handleImageClick={handleImageClick}
         />
+        <ImageData metadata={imageData.metadata} />
+
+        {/* Result Message */}
+        {resultMessage && (
+          <p className="mt-4 text-2xl font-bold text-green-400">
+            {resultMessage}
+          </p>
+        )}
+
+        {/* Play Buttons */}
+        <PlayButtons
+          selectedImage={selectedImage}
+          handleSubmit={handleSubmit}
+          handleNext={handleNext}
+          hasSubmitted={hasSubmitted}
+        />
+
+        {/* Metadata Below the Images */}
       </div>
-
-      {/* Metadata Below Images */}
-      <ImageData metadata={imageData.metadata} />
-
-      {/* Result Message */}
-      {resultMessage && (
-        <p className="mt-4 text-2xl font-bold text-green-400">
-          {resultMessage}
-        </p>
-      )}
-
-      {/* Play Buttons */}
-      <PlayButtons
-        selectedImage={selectedImage}
-        handleSubmit={handleSubmit}
-        handleNext={handleNext}
-        hasSubmitted={hasSubmitted}
-      />
     </div>
   );
 };

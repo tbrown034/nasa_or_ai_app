@@ -1,4 +1,6 @@
+import LoadingSpinner from "@/app/UI/LoadingSpinner";
 import Image from "next/image";
+import { useState } from "react";
 
 const ImagePair = ({
   nasaImageUrl,
@@ -7,10 +9,10 @@ const ImagePair = ({
   selectedImage,
   handleImageClick,
 }) => {
-  const imageClass = "object-cover w-full h-auto rounded-lg";
-  const selectedClass = "border-4 border-blue-500 transform scale-105";
-  const defaultClass = "border-2 border-white";
-  const unselectedClass = selectedImage ? "opacity-50" : "";
+  const [nasaImageLoaded, setNasaImageLoaded] = useState(false);
+  const [aiImageLoaded, setAiImageLoaded] = useState(false);
+
+  const aspectRatio = "1/1"; // Aspect ratio for square images (changeable)
 
   const imageContainerClass =
     "relative cursor-pointer transition-transform duration-300 ease-in-out";
@@ -20,21 +22,25 @@ const ImagePair = ({
       key="nasa"
       onClick={() => handleImageClick("nasa")}
       className={`${imageContainerClass} ${
-        selectedImage === "nasa" ? selectedClass : unselectedClass
-      } ${defaultClass} w-full md:w-1/2`} // Responsive sizing
+        selectedImage === "nasa"
+          ? "border-4 border-blue-500 transform scale-105"
+          : selectedImage
+          ? "opacity-50"
+          : ""
+      } border-2 border-white w-full md:w-1/2`} // Responsive sizing
+      style={{ aspectRatio }} // Maintain aspect ratio
     >
       <Image
         src={nasaImageUrl}
         alt="NASA Image"
-        layout="responsive"
-        width={400}
-        height={400}
-        objectFit="cover"
-        className={imageClass}
+        fill
+        sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+        onLoadingComplete={() => setNasaImageLoaded(true)}
+        className="object-cover rounded-lg"
       />
-      {selectedImage === "nasa" && (
-        <div className="absolute inset-0 flex items-center justify-center text-xl font-bold text-white">
-          Selected
+      {!nasaImageLoaded && (
+        <div className="absolute inset-0 flex items-center justify-center ">
+          <LoadingSpinner />
         </div>
       )}
     </div>
@@ -45,21 +51,25 @@ const ImagePair = ({
       key="ai"
       onClick={() => handleImageClick("ai")}
       className={`${imageContainerClass} ${
-        selectedImage === "ai" ? selectedClass : unselectedClass
-      } ${defaultClass} w-full md:w-1/2`} // Responsive sizing
+        selectedImage === "ai"
+          ? "border-4 border-blue-500 transform scale-105"
+          : selectedImage
+          ? "opacity-50"
+          : ""
+      } border-2 border-white w-full md:w-1/2`} // Responsive sizing
+      style={{ aspectRatio }} // Maintain aspect ratio
     >
       <Image
         src={aiImageUrl}
         alt="AI Image"
-        layout="responsive"
-        width={400}
-        height={400}
-        objectFit="cover"
-        className={imageClass}
+        fill
+        sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+        onLoadingComplete={() => setAiImageLoaded(true)}
+        className="object-cover rounded-lg"
       />
-      {selectedImage === "ai" && (
-        <div className="absolute inset-0 flex items-center justify-center text-xl font-bold text-white">
-          Selected
+      {!aiImageLoaded && (
+        <div className="absolute inset-0 flex items-center justify-center">
+          <LoadingSpinner />
         </div>
       )}
     </div>

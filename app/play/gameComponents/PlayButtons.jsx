@@ -6,7 +6,7 @@ const PlayButtons = ({
   hasSubmitted,
 }) => {
   return (
-    <div className="flex flex-col items-center mt-8">
+    <div className="flex flex-col items-center ">
       {/* Submit Button */}
       <button
         onClick={handleSubmit}

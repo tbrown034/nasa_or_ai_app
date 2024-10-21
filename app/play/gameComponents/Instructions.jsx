@@ -2,7 +2,7 @@ import React from "react";
 
 export default function Instructions() {
   return (
-    <div className="w-full max-w-3xl p-4 text-center rounded-md shadow-lg bg-gradient-to-b from-gray-800 to-gray-900">
+    <div className="w-full max-w-4xl p-4 text-center rounded-md shadow-lg bg-gradient-to-b from-gray-800 to-gray-900">
       <h2 className="text-xl font-bold text-yellow-400">Instructions</h2>
       <p className="text-lg text-gray-300">
         Select the real NASA image from the two options below. Click to select,
