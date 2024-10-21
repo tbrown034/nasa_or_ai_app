@@ -30,7 +30,7 @@ export default function Play() {
   }, []);
 
   return (
-    <div className="flex flex-col items-center justify-center gap-8 p-4 text-white ">
+    <div className="flex flex-col items-center justify-center gap-8 p-4 mt-4 text-white ">
       <h1 className="text-4xl font-bold tracking-wider text-center text-yellow-300 md:text-5xl neon-glow">
         NASA or AI: The Challenge
       </h1>

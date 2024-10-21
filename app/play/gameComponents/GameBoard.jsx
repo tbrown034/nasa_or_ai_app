@@ -7,25 +7,31 @@ import ImageData from "./ImageData";
 
 const GameBoard = ({ imageData, isNasaFirst, fetchRandomPair }) => {
   const [selectedImage, setSelectedImage] = useState(null);
-  const [resultMessage, setResultMessage] = useState("");
-  const [hasSubmitted, setHasSubmitted] = useState(false);
+  const [isCorrect, setIsCorrect] = useState(null); // Correct or incorrect state
+  const [hasSubmitted, setHasSubmitted] = useState(false); // Track if the user submitted
 
-  const handleImageClick = (imageType) => setSelectedImage(imageType);
-
-  const handleSubmit = () => {
-    if (selectedImage === "nasa") {
-      setResultMessage("🎉 Correct! You identified the real NASA image!");
-    } else {
-      setResultMessage("🚫 Incorrect! That was the AI-generated image.");
+  // Handle the image click (selection)
+  const handleImageClick = (imageType) => {
+    if (!hasSubmitted) {
+      // Only allow selection before submission
+      setSelectedImage(imageType);
     }
-    setHasSubmitted(true); // Disable further submissions
+  };
+
+  // Check correctness of the selected image
+  const handleSubmit = () => {
+    if (selectedImage) {
+      const isCorrectChoice = selectedImage === "nasa"; // Check if correct
+      setIsCorrect(isCorrectChoice); // Set correct/incorrect state
+      setHasSubmitted(true); // Lock the submission
+    }
   };
 
   const handleNext = () => {
     setSelectedImage(null); // Reset for next round
-    setResultMessage("");
+    setIsCorrect(null); // Reset correctness
     setHasSubmitted(false); // Enable submission for next round
-    fetchRandomPair(); // Fetch new image pair
+    fetchRandomPair(); // Load new image pair
   };
 
   return (
@@ -38,13 +44,21 @@ const GameBoard = ({ imageData, isNasaFirst, fetchRandomPair }) => {
           isNasaFirst={isNasaFirst}
           selectedImage={selectedImage}
           handleImageClick={handleImageClick}
+          isCorrect={isCorrect} // Pass down correctness state
+          hasSubmitted={hasSubmitted} // Pass submission state
         />
         <ImageData metadata={imageData.metadata} />
 
         {/* Result Message */}
-        {resultMessage && (
-          <p className="mt-4 text-2xl font-bold text-green-400">
-            {resultMessage}
+        {hasSubmitted && (
+          <p
+            className={`mt-4 text-2xl font-bold ${
+              isCorrect ? "text-green-400" : "text-red-400"
+            }`}
+          >
+            {isCorrect
+              ? "🎉 Correct! You identified the real NASA image!"
+              : "🚫 Incorrect! That was the AI-generated image."}
           </p>
         )}
 
@@ -55,8 +69,6 @@ const GameBoard = ({ imageData, isNasaFirst, fetchRandomPair }) => {
           handleNext={handleNext}
           hasSubmitted={hasSubmitted}
         />
-
-        {/* Metadata Below the Images */}
       </div>
     </div>
   );
