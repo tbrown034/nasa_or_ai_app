@@ -1,12 +1,5 @@
 import React from "react";
-import { Audiowide } from "next/font/google";
-
-// Audiowide font for titles and buttons
-const audiowide = Audiowide({
-  weight: "400",
-  subsets: ["latin"],
-  display: "swap",
-});
+import { audiowide } from "@/app/utils/fonts";
 
 export default function Modal({
   title,

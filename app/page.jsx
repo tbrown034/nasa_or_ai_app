@@ -1,13 +1,6 @@
 import Link from "next/link";
-import { Audiowide } from "next/font/google";
+import { audiowide } from "@/app/utils/fonts";
 import Logo from "./UI/Logo.jsx"; // Ensure the Logo component is imported correctly
-
-// Import the Audiowide font for the title
-const audiowide = Audiowide({
-  weight: "400",
-  subsets: ["latin"],
-  display: "swap",
-});
 
 export default function Home() {
   return (

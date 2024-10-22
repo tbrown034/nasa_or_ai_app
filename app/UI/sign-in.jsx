@@ -3,16 +3,9 @@
 
 import { useRouter } from "next/navigation";
 import { useSession, signIn } from "next-auth/react";
-import { Audiowide } from "next/font/google";
+import { audiowide } from "@/app/utils/fonts";
 import { ArrowPathIcon } from "@heroicons/react/24/solid";
 import Logo from "./Logo"; // Assuming Logo is a component for your branding/logo
-
-// Apply the Audiowide font
-const audiowide = Audiowide({
-  weight: "400",
-  subsets: ["latin"],
-  display: "swap",
-});
 
 export default function SignIn() {
   const router = useRouter();

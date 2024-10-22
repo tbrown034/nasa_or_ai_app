@@ -3,15 +3,8 @@
 import { useSession, signOut } from "next-auth/react";
 import { useState, useEffect } from "react";
 import Link from "next/link";
-import { Audiowide } from "next/font/google";
+import { audiowide } from "@/app/utils/fonts";
 import Modal from "../UI/Modal"; // Import your new Modal component
-
-// Importing the Audiowide font for titles
-const audiowide = Audiowide({
-  weight: "400",
-  subsets: ["latin"],
-  display: "swap",
-});
 
 const Profile = () => {
   const { data: session } = useSession();

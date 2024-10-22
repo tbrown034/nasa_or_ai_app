@@ -1,14 +1,9 @@
 "use client";
 import Link from "next/link";
 import { useSession } from "next-auth/react";
-import { useState, useEffect, Suspense } from "react";
-import { Audiowide } from "next/font/google";
-
-const audiowide = Audiowide({
-  weight: "400",
-  subsets: ["latin"],
-  display: "swap",
-});
+import { useState } from "react";
+import LoadingSpinner from "@/app/UI/LoadingSpinner"; // Import the LoadingSpinner component
+import { audiowide } from "@/app/utils/fonts";
 
 export default function AdminPage() {
   const { data: session, status } = useSession();
@@ -47,6 +42,7 @@ export default function AdminPage() {
 
   return (
     <div className="flex flex-col items-center justify-center min-h-screen p-8">
+      {/* Admin Header */}
       <h1
         className={`mb-8 text-4xl font-bold text-white ${audiowide.className}`}
       >
@@ -54,7 +50,7 @@ export default function AdminPage() {
       </h1>
 
       {/* Links to Other Pages */}
-      <div className="flex flex-col gap-4 mb-12">
+      <div className="flex flex-col w-full gap-4 mb-12">
         <Link
           className="px-4 py-2 text-lg text-white border-2 border-white rounded-md hover:bg-gray-700"
           href="/profile"
@@ -63,24 +59,12 @@ export default function AdminPage() {
         </Link>
         <Link
           className="px-4 py-2 text-lg text-white border-2 border-white rounded-md hover:bg-gray-700"
-          href="/apod"
-        >
-          Show APOD
-        </Link>
-        <Link
-          className="px-4 py-2 text-lg text-white border-2 border-white rounded-md hover:bg-gray-700"
-          href="/random"
-        >
-          Show Random APOD
-        </Link>
-        <Link
-          className="px-4 py-2 text-lg text-white border-2 border-white rounded-md hover:bg-gray-700"
           href="/nasaVsAi"
         >
-          NASA vs AI
+          Generate Pair
         </Link>
         <button
-          className="px-4 py-2 text-lg text-white border-2 border-white rounded-md hover:bg-gray-700"
+          className="px-4 py-2 text-lg text-left text-white border-2 border-white rounded-md hover:bg-gray-700 w-fit" // Left aligned "View Database"
           onClick={loadTable}
         >
           View Database
@@ -88,11 +72,16 @@ export default function AdminPage() {
       </div>
 
       {/* Error or Loading States */}
-      {loading && <p className="text-xl text-white">Loading...</p>}
+      {loading && (
+        <div className="flex flex-col items-center">
+          <LoadingSpinner /> {/* Show spinner during loading */}
+          <p className="mt-4 text-lg text-white">Loading database...</p>
+        </div>
+      )}
       {error && <p className="text-red-500">Error: {error}</p>}
 
       {/* Table of Images */}
-      {images.length > 0 && (
+      {!loading && images.length > 0 && (
         <table className="min-w-full text-white bg-gray-800 rounded-lg">
           <thead>
             <tr className="border-b border-gray-600">

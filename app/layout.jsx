@@ -1,10 +1,10 @@
-import { Inter, Press_Start_2P } from "next/font/google";
+import { Inter } from "next/font/google";
 import "./globals.css";
-import Header from "./UI/Header"; // Import your Header
-import Footer from "./UI/Footer"; // Import your Footer
-import { SessionProvider } from "next-auth/react"; // Import SessionProvider for authentication
+import Header from "./UI/Header";
+import Footer from "./UI/Footer";
+import { SessionProvider } from "next-auth/react";
 
-// Inter for general use
+// Inter for general use, applied globally
 const inter = Inter({
   subsets: ["latin"],
   display: "swap",
@@ -19,7 +19,10 @@ export default function RootLayout({ children }) {
           <Header />
 
           {/* Main content */}
-          <main className="flex-grow">{children}</main>
+          <main className="flex-grow">
+            {/* Specific areas use Audiowide */}
+            <div>{children}</div>
+          </main>
 
           {/* Footer */}
           <Footer />

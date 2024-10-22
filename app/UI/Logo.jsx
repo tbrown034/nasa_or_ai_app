@@ -1,16 +1,11 @@
 "use client";
 import React, { useState } from "react";
 import Image from "next/image";
-import { Audiowide } from "next/font/google";
+import { audiowide } from "@/app/utils/fonts";
 import realLogo from "../../public/assets/logos/nasaLogoReal.png";
 import aiLogo from "../../public/assets/logos/nasaLogoAi.png";
 
 // Import the font for "VS" text
-const audiowide = Audiowide({
-  weight: "400",
-  subsets: ["latin"],
-  display: "swap",
-});
 
 const Logo = () => {
   const [isAiLogoFirst, setIsAiLogoFirst] = useState(false); // Toggle for the first logo
