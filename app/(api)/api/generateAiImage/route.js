@@ -1,4 +1,3 @@
-// generateAIImage.route.js
 import { NextResponse } from "next/server";
 import OpenAI from "openai";
 
@@ -8,36 +7,32 @@ export async function POST(request) {
     apiKey: process.env.OPENAI_API_KEY,
   });
 
-  const prompt = `Generate an image inspired by NASA's Astronomy Picture of the Day (APOD).
-  APOD showcases images ranging from direct telescope captures to processed representations of astronomical data. These images aim to educate and inspire, often accompanied by explanations that deepen understanding.
+  // Truncate metadata fields if they are too long
+  const title = metadata.title?.slice(0, 100); // Limit the title to 100 characters
+  const explanation = metadata.explanation?.slice(0, 500); // Limit the explanation to 500 characters
 
-  This image is for an app that challenges users to distinguish between real NASA photos and AI-generated images. It must mimic NASA's style, content, and visual characteristics, making it hard to tell the difference.
+  // Optimized prompt to stay well within the 4096 token limit
+  const prompt = `
+    Generate an AI image inspired by NASA's Astronomy Picture of the Day (APOD) for an educational game. The image should replicate NASA's style (infer based on metadat whether it's earth, space or more abstract photo) and make it hard to distinguish from real APOD images.
 
-  Use the following metadata to guide the image generation:
-  - **Title**: "${metadata.title}"
-  - **Explanation**: ${metadata.explanation}
-  - **Copyright**: ${
-    metadata.copyright
-      ? `Image Credit: ${metadata.copyright.trim()}`
-      : "No specific copyright information"
-  }
-  - **Date**: ${metadata.date}.
+    Use the following metadata:
+    - **Title**: "${title}"
+    - **Explanation**: "${explanation}" (truncated for brevity)
+    - **Date**: ${metadata.date}
+    ${metadata.copyright ? `- **Image Credit**: ${metadata.copyright}` : ""}
 
-  ### Guidelines:
-  1. **Interpret Thoughtfully**: Ensure the primary subject and context are the focal points. If specific celestial objects or phenomena are mentioned, feature them prominently.
-  2. **Select Photo Type**:
-     - **Photorealistic**: For direct observations, use realistic lighting, textures, and spatial relationships.
-     - **Processed Data**: For non-visible wavelengths, use scientifically accurate colors and patterns.
-     - **Abstract/Artistic**: For conceptual depictions, use symbolic representations while maintaining scientific integrity.
-  3. **Use Metadata**: Consider the date for style and technology representation, and respect the artistic intent if copyright is provided.
-  4. **Visual Coherence**: Ensure the image is scientifically plausible and visually engaging, avoiding any signs of AI generation.
-  5. **Avoid Text**: Do not include text or labels within the image. The image should stand alone.
+    Guidelines:
+    1. **Adapt to Content**: If it's an Earth-based photograph, mimic realistic landscapes, atmospheric events, or natural phenomena. For space-related content, generate detailed cosmic scenes with stars, nebulae, or celestial bodies. For scientific data visualizations, maintain a sense of realism with plausible representations.
+    2. **Style and Realism**: The image should feel scientifically accurate, and visually plausible, as if it were captured with a telescope or satellite, like Hubble or JWST images.
+    3. **Avoid Text**: Do not include any text or labels within the image.
+    4. **Square Format**: Ensure the image fits a 1024x1024 resolution.
+    5. **Realism and Accuracy**: Make sure the generated image mimics the level of realism found in NASA APOD images, whether photorealistic, abstract, or scientific data-based.
 
-  ### Objective:
-  Create an image that could convincingly appear as NASA's APOD, challenging users to determine if it's real or AI-generated.`;
+    The goal is to create an image that users would struggle to distinguish from a real NASA APOD.
+  `;
 
   try {
-    // Generate the AI image using OpenAI's DALL·E
+    // Generate the AI image using OpenAI's DALL·E 3
     const response = await openai.images.generate({
       model: "dall-e-3",
       prompt: prompt,
