@@ -44,31 +44,33 @@ export default function AdminPage() {
     <div className="flex flex-col items-center justify-center min-h-screen p-8">
       {/* Admin Header */}
       <h1
-        className={`mb-8 text-4xl font-bold text-white ${audiowide.className}`}
+        className={`mb-8 text-5xl font-bold text-yellow-300 ${audiowide.className}`}
       >
         Admin Dashboard
       </h1>
 
       {/* Links to Other Pages */}
-      <div className="flex flex-col w-full gap-4 mb-12">
+      {/* Links to Other Pages */}
+      {/* Links to Other Pages */}
+      <div className="flex flex-col w-full max-w-md gap-6 mb-12">
         <Link
-          className="px-4 py-2 text-lg text-white border-2 border-white rounded-md hover:bg-gray-700"
+          className="w-full px-6 py-3 text-lg font-semibold text-center text-black transition bg-yellow-400 rounded-lg hover:bg-yellow-500"
           href="/profile"
         >
           Back to Profile
         </Link>
         <Link
-          className="px-4 py-2 text-lg text-white border-2 border-white rounded-md hover:bg-gray-700"
+          className="w-full px-6 py-3 text-lg font-semibold text-center text-black transition bg-yellow-400 rounded-lg hover:bg-yellow-500"
           href="/nasaVsAi"
         >
           Generate Pair
         </Link>
-        <button
-          className="px-4 py-2 text-lg text-left text-white border-2 border-white rounded-md hover:bg-gray-700 w-fit" // Left aligned "View Database"
-          onClick={loadTable}
+        <Link
+          className="w-full px-6 py-3 text-lg font-semibold text-center text-black transition bg-yellow-400 rounded-lg hover:bg-yellow-500"
+          href="/database" // Assuming you create a route for this.
         >
           View Database
-        </button>
+        </Link>
       </div>
 
       {/* Error or Loading States */}
