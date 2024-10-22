@@ -1,7 +1,7 @@
 "use client";
 import Link from "next/link";
 import { useSession } from "next-auth/react";
-import { useState, useEffect } from "react";
+import { useState, useEffect, Suspense } from "react";
 import { Audiowide } from "next/font/google";
 
 const audiowide = Audiowide({
@@ -47,7 +47,6 @@ export default function AdminPage() {
 
   return (
     <div className="flex flex-col items-center justify-center min-h-screen p-8">
-      {/* Admin Header */}
       <h1
         className={`mb-8 text-4xl font-bold text-white ${audiowide.className}`}
       >
