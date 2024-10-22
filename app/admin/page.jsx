@@ -1,8 +1,8 @@
 "use client";
 import Link from "next/link";
 import { useSession } from "next-auth/react";
-import { useState } from "react";
-import LoadingSpinner from "@/app/UI/LoadingSpinner"; // Import the LoadingSpinner component
+import { useState, useEffect } from "react";
+import LoadingSpinner from "@/app/UI/LoadingSpinner"; // Custom spinner component
 import { audiowide } from "@/app/utils/fonts";
 
 export default function AdminPage() {
@@ -11,9 +11,9 @@ export default function AdminPage() {
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(false);
 
-  const adminEmail = process.env.NEXT_PUBLIC_ADMIN_EMAIL;
+  const adminEmail = process.env.NEXT_PUBLIC_ADMIN_EMAIL; // Set admin email in .env.local
 
-  // Protect the admin page
+  // Protect the admin page, redirect non-admins
   if (status === "loading") return <p>Loading...</p>;
   if (!session || session.user.email !== adminEmail) {
     return (
@@ -25,20 +25,40 @@ export default function AdminPage() {
     );
   }
 
+  // Fetch the database table data
   const loadTable = async () => {
     setLoading(true);
     try {
       const response = await fetch("/api/getAll");
       if (!response.ok) throw new Error(`Error: ${response.status}`);
       const data = await response.json();
-      setImages(data);
+      setImages(data); // Store data
     } catch (err) {
-      console.error("Fetch images error:", err);
-      setError(err.message);
+      setError(err.message); // Handle error
     } finally {
-      setLoading(false);
+      setLoading(false); // Stop loading
     }
   };
+
+  // Delete image by ID
+  const handleDelete = async (id) => {
+    try {
+      const response = await fetch(`/api/deleteImage?id=${id}`, {
+        method: "DELETE",
+      });
+      if (!response.ok) throw new Error("Failed to delete image.");
+      setImages((prevImages) =>
+        prevImages.filter((image) => image.metadata_id !== id)
+      ); // Remove deleted image
+    } catch (err) {
+      setError(err.message);
+    }
+  };
+
+  // Load data when the component mounts
+  useEffect(() => {
+    loadTable();
+  }, []);
 
   return (
     <div className="flex flex-col items-center justify-center min-h-screen p-8">
@@ -49,41 +69,38 @@ export default function AdminPage() {
         Admin Dashboard
       </h1>
 
-      {/* Links to Other Pages */}
-      {/* Links to Other Pages */}
-      {/* Links to Other Pages */}
+      {/* Navigation Links */}
       <div className="flex flex-col w-full max-w-md gap-6 mb-12">
         <Link
-          className="w-full px-6 py-3 text-lg font-semibold text-center text-black transition bg-yellow-400 rounded-lg hover:bg-yellow-500"
+          className="w-full px-6 py-3 text-lg font-semibold text-center text-black bg-yellow-400 rounded-lg hover:bg-yellow-500"
           href="/profile"
         >
           Back to Profile
         </Link>
         <Link
-          className="w-full px-6 py-3 text-lg font-semibold text-center text-black transition bg-yellow-400 rounded-lg hover:bg-yellow-500"
+          className="w-full px-6 py-3 text-lg font-semibold text-center text-black bg-yellow-400 rounded-lg hover:bg-yellow-500"
           href="/nasaVsAi"
         >
           Generate Pair
         </Link>
         <Link
-          className="w-full px-6 py-3 text-lg font-semibold text-center text-black transition bg-yellow-400 rounded-lg hover:bg-yellow-500"
-          href="/database" // Assuming you create a route for this.
+          className="w-full px-6 py-3 text-lg font-semibold text-center text-black bg-yellow-400 rounded-lg hover:bg-yellow-500"
+          href="/database"
         >
           View Database
         </Link>
       </div>
 
-      {/* Error or Loading States */}
-      {loading && (
+      {/* Error or Loading State */}
+      {loading ? (
         <div className="flex flex-col items-center">
-          <LoadingSpinner /> {/* Show spinner during loading */}
-          <p className="mt-4 text-lg text-white">Loading database...</p>
+          <LoadingSpinner /> {/* Show spinner while loading */}
+          <p className="mt-4 text-lg text-white">Loading data...</p>
         </div>
-      )}
-      {error && <p className="text-red-500">Error: {error}</p>}
-
-      {/* Table of Images */}
-      {!loading && images.length > 0 && (
+      ) : error ? (
+        <p className="text-red-500">Error: {error}</p>
+      ) : (
+        /* Table of Images */
         <table className="min-w-full text-white bg-gray-800 rounded-lg">
           <thead>
             <tr className="border-b border-gray-600">
