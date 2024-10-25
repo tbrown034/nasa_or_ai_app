@@ -1,19 +1,34 @@
 "use client";
-import Link from "next/link";
+
 import { useSession } from "next-auth/react";
 import { useState, useEffect } from "react";
-import LoadingSpinner from "@/app/UI/LoadingSpinner"; // Custom spinner component
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
+import LoadingSpinner from "@/app/UI/LoadingSpinner";
+import AdminTable from "./components/AdminTable";
+import PreviewPair from "./components/PreviewPair"; // Import the preview component
 import { audiowide } from "@/app/utils/fonts";
+
+// Utility to format date to "YYYY-MM-DD"
+const formatDate = (date) => date.toISOString().split("T")[0];
 
 export default function AdminPage() {
   const { data: session, status } = useSession();
   const [images, setImages] = useState([]);
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(false);
+  const [selectedDate, setSelectedDate] = useState(new Date());
+  const [dateStatus, setDateStatus] = useState(null);
+  const [statusMessage, setStatusMessage] = useState(""); // Message for status
+  const [statusColor, setStatusColor] = useState(""); // Color for status message
+  const [isTableLoaded, setIsTableLoaded] = useState(false);
+  const [apodData, setApodData] = useState(null);
+  const [aiImageUrl, setAiImageUrl] = useState(null);
+  const [isPreview, setIsPreview] = useState(false);
 
-  const adminEmail = process.env.NEXT_PUBLIC_ADMIN_EMAIL; // Set admin email in .env.local
+  const adminEmail = process.env.NEXT_PUBLIC_ADMIN_EMAIL;
 
-  // Protect the admin page, redirect non-admins
+  // Check admin authentication
   if (status === "loading") return <p>Loading...</p>;
   if (!session || session.user.email !== adminEmail) {
     return (
@@ -32,135 +47,215 @@ export default function AdminPage() {
       const response = await fetch("/api/getAll");
       if (!response.ok) throw new Error(`Error: ${response.status}`);
       const data = await response.json();
-      setImages(data); // Store data
-    } catch (err) {
-      setError(err.message); // Handle error
-    } finally {
-      setLoading(false); // Stop loading
-    }
-  };
-
-  // Delete image by ID
-  const handleDelete = async (id) => {
-    try {
-      const response = await fetch(`/api/deleteImage?id=${id}`, {
-        method: "DELETE",
-      });
-      if (!response.ok) throw new Error("Failed to delete image.");
-      setImages((prevImages) =>
-        prevImages.filter((image) => image.metadata_id !== id)
-      ); // Remove deleted image
+      setImages(data);
+      setIsTableLoaded(true); // Mark table as loaded
     } catch (err) {
       setError(err.message);
+    } finally {
+      setLoading(false);
     }
   };
 
-  // Load data when the component mounts
-  useEffect(() => {
-    loadTable();
-  }, []);
+  // Check if entry exists for the selected date
+  const checkDateStatus = async (date) => {
+    try {
+      const formattedDate = formatDate(date);
+      const response = await fetch(`/api/checkEntry?date=${formattedDate}`);
+      const result = await response.json();
+
+      if (result.success) {
+        if (result.exists) {
+          setDateStatus("exists");
+          setStatusMessage("A pair already exists for this date.");
+          setStatusColor("text-green-500"); // Use green for existing pairs
+        } else {
+          setDateStatus("not-exists");
+          setStatusMessage("No pair exists for this date.");
+          setStatusColor("text-red-500"); // Use red for non-existing pairs
+        }
+      } else {
+        setError("Failed to check date status");
+      }
+    } catch (error) {
+      setError("Error checking date status");
+    }
+  };
+
+  // Handle manual date change
+  const handleDateChange = (date) => {
+    setSelectedDate(date);
+    checkDateStatus(date);
+  };
+
+  // Navigate to previous or next day
+  const changeDay = (increment) => {
+    const newDate = new Date(selectedDate);
+    newDate.setDate(selectedDate.getDate() + increment);
+    setSelectedDate(newDate);
+    checkDateStatus(newDate);
+  };
+
+  // Generate a NASA vs AI Pair for the selected date
+  const generatePair = async () => {
+    setLoading(true);
+    setError(null);
+    setIsPreview(false);
+
+    try {
+      const formattedDate = formatDate(selectedDate);
+
+      // Fetch the NASA APOD data for the selected date
+      const response = await fetch(`/api/nasaApod?date=${formattedDate}`);
+      if (!response.ok) {
+        throw new Error(`Failed to fetch APOD for date: ${formattedDate}`);
+      }
+
+      const fetchedApodData = await response.json();
+      if (!fetchedApodData.url) {
+        throw new Error("NASA APOD URL is missing.");
+      }
+
+      // Generate an AI image based on the APOD metadata
+      const aiResponse = await fetch("/api/generateAiImage", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ metadata: fetchedApodData }),
+      });
+
+      if (!aiResponse.ok) {
+        throw new Error("Failed to generate AI image");
+      }
+
+      const aiData = await aiResponse.json();
+
+      // Set fetched data to state for preview
+      setApodData(fetchedApodData);
+      setAiImageUrl(aiData.imageUrl);
+      setIsPreview(true); // Show the preview
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Save the generated pair to the database
+  const saveToDatabase = async () => {
+    try {
+      const response = await fetch("/api/saveNasaVsAi", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          metadata: apodData,
+          nasaUrl: apodData.url,
+          aiImageUrl,
+        }),
+      });
+
+      const result = await response.json();
+      if (result.success) {
+        setIsPreview(false);
+        alert("Pair saved successfully!");
+        checkDateStatus(selectedDate); // Refresh date status
+      } else {
+        throw new Error("Failed to save to database");
+      }
+    } catch (error) {
+      setError(error.message);
+    }
+  };
+
+  // Handle Random Date Fetch
+  const fetchRandomDate = () => {
+    const randomDate = new Date(
+      new Date().getTime() - Math.random() * 365 * 24 * 60 * 60 * 1000
+    );
+    setSelectedDate(randomDate);
+    checkDateStatus(randomDate);
+  };
 
   return (
     <div className="flex flex-col items-center justify-center min-h-screen p-8">
-      {/* Admin Header */}
       <h1
         className={`mb-8 text-5xl font-bold text-yellow-300 ${audiowide.className}`}
       >
         Admin Dashboard
       </h1>
 
-      {/* Navigation Links */}
-      <div className="flex flex-col w-full max-w-md gap-6 mb-12">
-        <Link
-          className="w-full px-6 py-3 text-lg font-semibold text-center text-black bg-yellow-400 rounded-lg hover:bg-yellow-500"
-          href="/profile"
+      {/* Date Picker Section */}
+      <div className="flex items-center mb-6 space-x-4">
+        <DatePicker
+          selected={selectedDate}
+          onChange={handleDateChange}
+          dateFormat="yyyy-MM-dd"
+          className="px-4 py-2 text-black rounded-md"
+        />
+        <button
+          onClick={() => changeDay(-1)}
+          className="px-4 py-2 font-semibold text-white bg-blue-600 rounded-lg hover:bg-blue-500"
         >
-          Back to Profile
-        </Link>
-        <Link
-          className="w-full px-6 py-3 text-lg font-semibold text-center text-black bg-yellow-400 rounded-lg hover:bg-yellow-500"
-          href="/nasaVsAi"
+          Previous Day
+        </button>
+        <button
+          onClick={() => generatePair()}
+          className="px-4 py-2 font-semibold text-white bg-purple-600 rounded-lg hover:bg-purple-500"
         >
           Generate Pair
-        </Link>
-        <Link
-          className="w-full px-6 py-3 text-lg font-semibold text-center text-black bg-yellow-400 rounded-lg hover:bg-yellow-500"
-          href="/database"
+        </button>
+        <button
+          onClick={() => changeDay(1)}
+          className="px-4 py-2 font-semibold text-white bg-blue-600 rounded-lg hover:bg-blue-500"
         >
-          View Database
-        </Link>
+          Next Day
+        </button>
+        <button
+          onClick={fetchRandomDate}
+          className="px-4 py-2 font-semibold text-white bg-green-600 rounded-lg hover:bg-green-500"
+        >
+          Random
+        </button>
       </div>
 
-      {/* Error or Loading State */}
+      {/* Status Message */}
+      {statusMessage && (
+        <p className={`mt-4 text-lg font-bold ${statusColor}`}>
+          {statusMessage}
+        </p>
+      )}
+
       {loading ? (
         <div className="flex flex-col items-center">
-          <LoadingSpinner /> {/* Show spinner while loading */}
+          <LoadingSpinner />
           <p className="mt-4 text-lg text-white">Loading data...</p>
         </div>
       ) : error ? (
         <p className="text-red-500">Error: {error}</p>
       ) : (
-        /* Table of Images */
-        <table className="min-w-full text-white bg-gray-800 rounded-lg">
-          <thead>
-            <tr className="border-b border-gray-600">
-              <th className="px-4 py-2">ID</th>
-              <th className="px-4 py-2">Title</th>
-              <th className="px-4 py-2">Date</th>
-              <th className="px-4 py-2">Date Added</th>
-              <th className="px-4 py-2">Explanation</th>
-              <th className="px-4 py-2">NASA Image</th>
-              <th className="px-4 py-2">AI Image</th>
-              <th className="px-4 py-2">Actions</th>
-            </tr>
-          </thead>
-          <tbody>
-            {images.map((image) => (
-              <tr key={image.metadata_id} className="hover:bg-gray-700">
-                <td className="px-4 py-2 border border-gray-600">
-                  {image.metadata_id}
-                </td>
-                <td className="px-4 py-2 border border-gray-600">
-                  {image.title}
-                </td>
-                <td className="px-4 py-2 border border-gray-600">
-                  {image.date}
-                </td>
-                <td className="px-4 py-2 border border-gray-600">
-                  {image.date_time_added}
-                </td>
-                <td className="px-4 py-2 border border-gray-600">
-                  {image.explanation}
-                </td>
-                <td className="px-4 py-2 border border-gray-600">
-                  <img
-                    src={image.nasa_image_url}
-                    alt="NASA"
-                    className="w-16 h-16"
-                  />
-                </td>
-                <td className="px-4 py-2 border border-gray-600">
-                  <img
-                    src={`data:image/png;base64,${Buffer.from(
-                      image.ai_image_data
-                    ).toString("base64")}`}
-                    alt="AI"
-                    className="w-16 h-16"
-                  />
-                </td>
-                <td className="px-4 py-2 border border-gray-600">
-                  <button
-                    onClick={() => handleDelete(image.metadata_id)}
-                    className="px-2 py-1 text-red-500 bg-gray-100 rounded-lg hover:bg-red-600 hover:text-white"
-                  >
-                    Delete
-                  </button>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
+        isPreview && (
+          <PreviewPair
+            apodData={apodData}
+            aiImageUrl={aiImageUrl}
+            saveToDatabase={saveToDatabase}
+          />
+        )
       )}
+
+      {/* Button to Load Database Table */}
+      <div className="mt-6">
+        <button
+          onClick={loadTable}
+          className="px-6 py-3 text-lg font-semibold text-white transition-all bg-green-600 rounded-lg hover:bg-green-500"
+        >
+          Load Database
+        </button>
+      </div>
+
+      {/* Table Display */}
+      {isTableLoaded && <AdminTable images={images} />}
     </div>
   );
 }
