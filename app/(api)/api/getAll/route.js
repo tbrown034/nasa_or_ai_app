@@ -1,10 +1,11 @@
-// getAll/route.js
 import { NextResponse } from "next/server";
 import pool from "../../../../lib/db";
 
 export async function GET() {
   try {
     const client = await pool.connect();
+
+    // Modified query to limit results to 20
     const newImagesResult = await client.query(`
       SELECT
         metadata.id AS metadata_id,
@@ -23,10 +24,12 @@ export async function GET() {
         image_ai ai ON metadata.id = ai.metadata_id
       ORDER BY
         metadata.date_time_added DESC
+      LIMIT 20  -- Hard limit for testing purposes
     `);
 
     client.release();
 
+    // Return the fetched rows
     return NextResponse.json(newImagesResult.rows);
   } catch (error) {
     console.error("Error fetching images:", error);
