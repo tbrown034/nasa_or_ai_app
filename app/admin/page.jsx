@@ -178,6 +178,29 @@ export default function AdminPage() {
     checkDateStatus(randomDate);
   };
 
+  const handleDelete = async (imageId) => {
+    try {
+      const response = await fetch("/api/deleteImage", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ imageId }),
+      });
+
+      const result = await response.json();
+      if (result.success) {
+        // Remove the deleted image from the state
+        setImages(images.filter((image) => image.metadata_id !== imageId));
+        alert("Image deleted successfully!");
+      } else {
+        throw new Error("Failed to delete image");
+      }
+    } catch (err) {
+      setError(err.message);
+    }
+  };
+
   return (
     <div className="flex flex-col items-center justify-start min-h-screen py-8 space-y-8 bg-transparent">
       <h1
@@ -222,7 +245,7 @@ export default function AdminPage() {
       <div className="w-full max-w-md">
         <button
           onClick={generatePair}
-          className="w-full px-6 py-3 text-lg font-semibold text-white transition-transform transform bg-yellow-400 rounded-lg shadow-md hover:bg-yellow-500 hover:scale-105"
+          className="w-full px-6 py-3 text-lg font-semibold text-white transition-transform transform bg-blue-800 rounded-lg shadow-md hover:bg-yellow-500 hover:scale-105"
         >
           Generate Pair
         </button>
@@ -256,14 +279,14 @@ export default function AdminPage() {
       <div className="w-full max-w-md mt-8">
         <button
           onClick={loadTable}
-          className="w-full px-6 py-3 text-lg font-semibold text-white transition-all bg-teal-500 rounded-lg shadow-md hover:bg-teal-400"
+          className="w-full px-6 py-3 text-lg font-semibold text-white transition-all bg-blue-900 rounded-lg shadow-md hover:bg-blue-950"
         >
           Load Database
         </button>
       </div>
 
       {/* Table Display */}
-      {isTableLoaded && <AdminTable images={images} />}
+      {isTableLoaded && <AdminTable images={images} onDelete={handleDelete} />}
     </div>
   );
 }

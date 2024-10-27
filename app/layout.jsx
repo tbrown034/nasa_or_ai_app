@@ -13,7 +13,7 @@ const inter = Inter({
 export default function RootLayout({ children }) {
   return (
     <html lang="en" className={inter.className}>
-      <body className="relative flex flex-col min-h-screen p-4 text-white bg-gradient-to-b from-indigo-900 via-blue-800 to-indigo-900">
+      <body className="relative flex flex-col min-h-screen p-4 text-white bg-gradient-to-b from-indigo-950 via-blue-800 to-indigo-800">
         <SessionProvider>
           {/* Header */}
           <Header />

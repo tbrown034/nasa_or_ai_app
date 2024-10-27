@@ -1,4 +1,3 @@
-// app/admin/components/AdminTable.jsx
 import React from "react";
 
 const AdminTable = ({ images, onDelete }) => {

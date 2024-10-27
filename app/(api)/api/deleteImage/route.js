@@ -1,7 +1,7 @@
 // app/api/deleteImage/route.js
 
 import { NextResponse } from "next/server";
-import pool from "../../../lib/db"; // Adjust path to your db connection
+import pool from "../../../../lib/db";
 
 export async function POST(request) {
   let client;
