@@ -29,8 +29,13 @@ export async function GET() {
 
     client.release();
 
-    // Return the fetched rows
-    return NextResponse.json(newImagesResult.rows);
+    // Return the fetched rows, disable caching with "no-store"
+    const response = NextResponse.json(newImagesResult.rows, {
+      headers: {
+        "Cache-Control": "no-store", // Disable ISR, do not cache
+      },
+    });
+    return response;
   } catch (error) {
     console.error("Error fetching images:", error);
     return NextResponse.json({ success: false, error: error.message });
