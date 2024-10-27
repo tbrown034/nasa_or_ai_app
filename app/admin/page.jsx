@@ -8,6 +8,7 @@ import LoadingSpinner from "@/app/UI/LoadingSpinner";
 import AdminTable from "./components/AdminTable";
 import PreviewPair from "./components/PreviewPair";
 import { audiowide } from "@/app/utils/fonts";
+import Modal from "@/app/UI/Modal"; // Import the Modal component
 
 // Utility to format date to "YYYY-MM-DD"
 const formatDate = (date) => date.toISOString().split("T")[0];
@@ -16,6 +17,8 @@ export default function AdminPage() {
   const { data: session, status } = useSession();
   const [images, setImages] = useState([]);
   const [error, setError] = useState(null);
+  const [deleteLoading, setDeleteLoading] = useState(false); // New state for delete loading
+
   const [loading, setLoading] = useState(false);
   const [selectedDate, setSelectedDate] = useState(new Date());
   const [dateStatus, setDateStatus] = useState(null);
@@ -25,6 +28,8 @@ export default function AdminPage() {
   const [apodData, setApodData] = useState(null);
   const [aiImageUrl, setAiImageUrl] = useState(null);
   const [isPreview, setIsPreview] = useState(false);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [imageToDelete, setImageToDelete] = useState(null);
 
   const adminEmail = process.env.NEXT_PUBLIC_ADMIN_EMAIL;
 
@@ -178,26 +183,40 @@ export default function AdminPage() {
     checkDateStatus(randomDate);
   };
 
-  const handleDelete = async (imageId) => {
+  // Handle the delete button click (open modal)
+  const confirmDelete = (imageId) => {
+    setImageToDelete(imageId);
+    setIsModalOpen(true);
+  };
+
+  // Actual deletion function
+  const handleDelete = async () => {
+    if (!imageToDelete) return;
+
     try {
       const response = await fetch("/api/deleteImage", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ imageId }),
+        body: JSON.stringify({ imageId: imageToDelete }),
       });
 
       const result = await response.json();
       if (result.success) {
         // Remove the deleted image from the state
-        setImages(images.filter((image) => image.metadata_id !== imageId));
+        setImages(
+          images.filter((image) => image.metadata_id !== imageToDelete)
+        );
         alert("Image deleted successfully!");
       } else {
         throw new Error("Failed to delete image");
       }
     } catch (err) {
       setError(err.message);
+    } finally {
+      setIsModalOpen(false); // Close the modal
+      setImageToDelete(null); // Clear the selected image
     }
   };
 
@@ -286,7 +305,25 @@ export default function AdminPage() {
       </div>
 
       {/* Table Display */}
-      {isTableLoaded && <AdminTable images={images} onDelete={handleDelete} />}
+      {isTableLoaded && <AdminTable images={images} onDelete={confirmDelete} />}
+
+      {/* Modal for delete confirmation */}
+      <Modal
+        title="Confirm Delete"
+        content={
+          deleteLoading ? (
+            <LoadingSpinner /> // Show spinner if deleting
+          ) : (
+            "Are you sure you want to delete this image? This action cannot be undone."
+          )
+        }
+        primaryAction={handleDelete}
+        primaryLabel="Delete"
+        secondaryAction={() => setIsModalOpen(false)}
+        secondaryLabel="Cancel"
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+      />
     </div>
   );
 }
