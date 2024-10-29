@@ -1,5 +1,22 @@
 import React from "react";
 
+// Function to format dates as "MM/DD/YYYY" (e.g., "9/19/2024")
+const formatDate = (dateString) => {
+  const date = new Date(dateString);
+  const month = date.getMonth() + 1; // Months are zero-indexed
+  const day = date.getDate();
+  const year = date.getFullYear();
+  return `${month}/${day}/${year}`;
+};
+
+// Function to limit explanation text to 100 characters
+const truncateText = (text, maxLength) => {
+  if (text.length > maxLength) {
+    return `${text.substring(0, maxLength)}...`;
+  }
+  return text;
+};
+
 const AdminTable = ({ images, onDelete }) => {
   return (
     <div className="mt-6">
@@ -12,7 +29,6 @@ const AdminTable = ({ images, onDelete }) => {
             <th className="px-4 py-2">Date Added</th>
             <th className="px-4 py-2">Explanation</th>
             <th className="px-4 py-2">NASA Image</th>
-            <th className="px-4 py-2">AI Image</th>
             <th className="px-4 py-2">Actions</th>
           </tr>
         </thead>
@@ -25,27 +41,20 @@ const AdminTable = ({ images, onDelete }) => {
               <td className="px-4 py-2 border border-gray-600">
                 {image.title}
               </td>
-              <td className="px-4 py-2 border border-gray-600">{image.date}</td>
               <td className="px-4 py-2 border border-gray-600">
-                {image.date_time_added}
+                {formatDate(image.date)}
               </td>
               <td className="px-4 py-2 border border-gray-600">
-                {image.explanation}
+                {formatDate(image.date_time_added)}
+              </td>
+              <td className="px-4 py-2 border border-gray-600">
+                {truncateText(image.explanation, 100)}
               </td>
               <td className="px-4 py-2 border border-gray-600">
                 <img
                   src={image.nasa_image_url}
                   alt="NASA"
-                  className="w-16 h-16"
-                />
-              </td>
-              <td className="px-4 py-2 border border-gray-600">
-                <img
-                  src={`data:image/png;base64,${Buffer.from(
-                    image.ai_image_data
-                  ).toString("base64")}`}
-                  alt="AI"
-                  className="w-16 h-16"
+                  className="object-cover w-16 h-16" // Limit image size
                 />
               </td>
               <td className="px-4 py-2 border border-gray-600">

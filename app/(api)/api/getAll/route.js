@@ -21,7 +21,6 @@ export async function GET() {
         image_nasa nasa ON metadata.id = nasa.metadata_id
       ORDER BY
         metadata.date_time_added DESC
-      LIMIT 20  -- Hard limit for testing purposes
     `);
 
     client.release();
