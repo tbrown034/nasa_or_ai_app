@@ -34,7 +34,7 @@ const GeneratePair = ({
       }
 
       // Fetch the NASA APOD data for the selected date
-      const response = await fetch(`/api/nasaApod?date=${formattedDate}`);
+      const response = await fetch(`/api/getNasaApod?date=${formattedDate}`);
       if (!response.ok) {
         throw new Error(`Failed to fetch APOD for date: ${formattedDate}`);
       }
