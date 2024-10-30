@@ -3,7 +3,7 @@ import React, { useState } from "react";
 import Image from "next/image";
 import { audiowide } from "@/app/utils/fonts";
 import realLogo from "../../public/assets/logos/nasaLogoReal.png";
-import aiLogo from "../../public/assets/logos/nasaLogoAi.png";
+import aiLogo from "../../public/assets/logos/nasaLogoNotReal.png";
 
 // Import the font for "VS" text
 
