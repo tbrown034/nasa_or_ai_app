@@ -1,18 +1,23 @@
+// app/play/page.jsx
 "use client";
 
 import { useEffect, useState } from "react";
 import GameBoard from "./gameComponents/GameBoard";
 import Instructions from "./gameComponents/Instructions";
 
+// Force dynamic rendering for this page
+export const dynamic = "force-dynamic";
+
 export default function Play() {
   const [imageData, setImageData] = useState(null);
   const [isNasaFirst, setIsNasaFirst] = useState(true);
 
+  // Fetch a random image pair from the API
   const fetchRandomPair = async () => {
-    setImageData(null); // Clear the previous data while fetching new images.
+    setImageData(null); // Clear previous data while fetching new images
 
     try {
-      const response = await fetch("/api/getRandomPair");
+      const response = await fetch("/api/getRandomPair", { cache: "no-store" });
       const data = await response.json();
       setImageData({
         metadata: data.metadata,
@@ -26,11 +31,11 @@ export default function Play() {
   };
 
   useEffect(() => {
-    fetchRandomPair(); // Fetch the first random pair when the page loads.
+    fetchRandomPair(); // Fetch the first random pair when the page loads
   }, []);
 
   return (
-    <div className="flex flex-col items-center justify-center gap-8 p-4 mt-4 text-white ">
+    <div className="flex flex-col items-center justify-center gap-8 p-4 mt-4 text-white">
       <h1 className="text-4xl font-bold tracking-wider text-center text-yellow-300 md:text-5xl neon-glow">
         NASA or AI: The Challenge
       </h1>

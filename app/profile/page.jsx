@@ -1,16 +1,17 @@
+// app/profile/page.jsx
 "use client";
 
 import { useSession, signOut } from "next-auth/react";
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import { audiowide } from "@/app/utils/fonts";
-import Modal from "../UI/Modal"; // Import your new Modal component
+import Modal from "../UI/Modal"; // Import your Modal component
 
 const Profile = () => {
   const { data: session } = useSession();
   const [showModal, setShowModal] = useState(false);
   const [userData, setUserData] = useState(null);
-  const [loading, setLoading] = useState(true); // Loading state for fetching user data
+  const [loading, setLoading] = useState(true);
 
   const isAdmin = session?.user?.email === process.env.NEXT_PUBLIC_ADMIN_EMAIL;
 
@@ -19,11 +20,13 @@ const Profile = () => {
     const fetchUserData = async () => {
       if (session) {
         try {
-          const response = await fetch("/api/getUserData");
+          const response = await fetch("/api/getUserData", {
+            cache: "no-store",
+          });
           const user = await response.json();
           setUserData(user);
         } finally {
-          setLoading(false); // Stop loading after data is fetched
+          setLoading(false);
         }
       }
     };
@@ -41,7 +44,7 @@ const Profile = () => {
     );
   }
 
-  // Handle sign out action
+  // Handle sign-out action
   const handleSignOut = async () => {
     await signOut({ callbackUrl: "/" });
   };
@@ -95,7 +98,7 @@ const Profile = () => {
         Sign Out
       </button>
 
-      {/* Reusable Modal */}
+      {/* Modal Component */}
       <Modal
         title="Are you sure you want to sign out?"
         content="By signing out, you will need to log back in to access your profile."
@@ -103,7 +106,7 @@ const Profile = () => {
         primaryLabel="Yes, Sign Out"
         secondaryLabel="Cancel"
         isOpen={showModal}
-        onClose={toggleModal} // Use the toggle function to close the modal
+        onClose={toggleModal}
       />
     </div>
   );

@@ -1,4 +1,3 @@
-// app/admin/components/GeneratePairSection.jsx
 import React, { useState } from "react";
 import { format } from "date-fns";
 import PreviewPair from "./PreviewPair";
@@ -13,9 +12,12 @@ const GeneratePair = ({
 }) => {
   const [savingPair, setSavingPair] = useState(false);
   const [successMessage, setSuccessMessage] = useState(null);
-  const [apodData, setApodData] = useState(null); // APOD data state
-  const [aiImageUrl, setAiImageUrl] = useState(null); // AI image URL state
-  const [isPreview, setIsPreview] = useState(false); // Preview visibility
+  const [apodData, setApodData] = useState(null);
+  const [aiImageUrl, setAiImageUrl] = useState(null);
+  const [isPreview, setIsPreview] = useState(false);
+
+  // Get today's date for comparison
+  const today = new Date();
 
   // Generate a NASA vs AI Pair for the selected date
   const generatePair = async () => {
@@ -24,30 +26,32 @@ const GeneratePair = ({
     setError(null);
 
     try {
+      // Check if selected date is beyond today
+      if (selectedDate > today) {
+        setError("Cannot generate a pair for a future date.");
+        setSavingPair(false);
+        return;
+      }
+
       const formattedDate = formatDate(selectedDate);
 
-      // Check if an entry already exists for the selected date
       if (dateStatus === "exists") {
         setError("A pair already exists for this date.");
         setSavingPair(false);
         return;
       }
 
-      // Fetch the NASA APOD data for the selected date
       const response = await fetch(`/api/getNasaApod?date=${formattedDate}`);
       if (!response.ok) {
         throw new Error(`Failed to fetch APOD for date: ${formattedDate}`);
       }
 
       const fetchedApodData = await response.json();
-      console.log("Fetched APOD data:", fetchedApodData);
 
-      // Check if the URL is valid
       if (!fetchedApodData.url) {
         throw new Error("NASA APOD URL is missing.");
       }
 
-      // Generate an AI image based on the APOD metadata
       const aiResponse = await fetch("/api/generateAiImage", {
         method: "POST",
         headers: {
@@ -62,10 +66,9 @@ const GeneratePair = ({
 
       const aiData = await aiResponse.json();
 
-      // Set fetched data to state for preview
       setApodData(fetchedApodData);
       setAiImageUrl(aiData.imageUrl);
-      setIsPreview(true); // Show the preview
+      setIsPreview(true);
     } catch (err) {
       setError(err.message);
     } finally {
@@ -73,7 +76,6 @@ const GeneratePair = ({
     }
   };
 
-  // Save the pair to the database
   const handleSave = async () => {
     try {
       const saveResponse = await fetch("/api/saveNasaVsAi", {
@@ -92,7 +94,7 @@ const GeneratePair = ({
       if (saveResult.success) {
         setSuccessMessage("Pair generated and saved successfully!");
         checkDateStatus(selectedDate);
-        setIsPreview(false); // Hide the preview after saving
+        setIsPreview(false);
       } else {
         setError("Failed to save the generated pair.");
       }
@@ -101,7 +103,6 @@ const GeneratePair = ({
     }
   };
 
-  // Reject the pair (reset state)
   const handleReject = () => {
     setApodData(null);
     setAiImageUrl(null);
@@ -109,7 +110,7 @@ const GeneratePair = ({
   };
 
   return (
-    <div className="mb-6">
+    <div className="flex flex-col items-center justify-center max-w-lg p-6 mx-auto space-y-4 rounded-lg shadow-lg bg-black/10 bg-opacity-80">
       {isPreview ? (
         <PreviewPair
           apodData={apodData}
@@ -121,15 +122,21 @@ const GeneratePair = ({
         <button
           onClick={generatePair}
           disabled={savingPair}
-          className="px-6 py-3 text-lg font-semibold text-white transition-all bg-purple-600 rounded-lg hover:bg-purple-500 disabled:bg-gray-500"
+          className={`px-6 py-3 text-lg font-semibold text-white bg-purple-600 rounded-lg shadow-md transform transition-transform hover:scale-105 hover:bg-purple-500 disabled:bg-gray-500 ${
+            savingPair ? "animate-pulse" : ""
+          }`}
         >
           {savingPair ? "Generating..." : "Generate Pair"}
         </button>
       )}
+
       {successMessage && (
-        <p className="mt-4 text-lg font-bold text-green-400">
+        <p className="mt-4 text-lg font-semibold text-green-400 neon-glow">
           {successMessage}
         </p>
+      )}
+      {setError && (
+        <p className="mt-4 text-lg font-semibold text-red-500">{setError}</p>
       )}
     </div>
   );
